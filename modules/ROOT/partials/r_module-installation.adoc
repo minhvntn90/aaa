@@ -1,0 +1,15 @@
+= Installation
+
+Magnolia Component Library can be installed using either Magnolia CLI or with Git, depending on whether you created your Magnolia installation using Magnolia CLI.
+
+== Using Magnolia CLI
+
+Run in your Magnolia's installation folder:
+
+```
+mgnl install btk
+```
+
+== Using Git
+
+Clone the Git repository link:https://git.magnolia-cms.com/projects/LIGHT-MODULES/repos/btk/[BTK repository^] into Magnolia's light modules folder.

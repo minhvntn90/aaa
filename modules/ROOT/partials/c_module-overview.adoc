@@ -1,0 +1,41 @@
+= {page-component-title}
+
+// tag::noTitle[]
+[%noheader,cols=",",]
+|===
+|Edition|DX Core
+
+|License |{mla}
+
+|Issues |link:{jira}{jira-project}[{jira-project}^]
+
+|Latest
+|{modules-version}
+
+|===
+
+// tag::introduction[]
+The Magnolia Component Library is a light module with a basic set of templates and components ideal to start new website project based on the Bootstrap framework. This module has the following features:
+
+. *Production-Ready*: The templates and components that can be used as-is without further development or modification
+
+. *Configurable*: Templates can be configured to allow or disallow the use of the components
+
+. *SEO-Friendly*: HTML output is semantic and provides schema.org microdata annotations
+
+. *Themable*: Look and feel can be easily customisable without changes to the code
+
+. *Customisable*: Provides the ability for extensibility and re-use to minimise development effort.
+
+. *Versioned*: Allows improvements to the library of components without causing breaking changes on sites that leverage it.
+
+. *Responsive*: Supports desktop, tablet and mobile breakpoints
+
+. *Accessible*: Provides best-effort support for link:https://www.w3.org/WAI/standards-guidelines/wcag/[WCAG 2 Level AA^] and link:https://www.w3.org/WAI/standards-guidelines/aria/[WAI-ARIA^] semantic information
+
+. *Imaging*: Leverages best-practices utilisation of imaging macros and the xref:product-docs:ROOT:Modules/List-of-modules/Imaging-module.adoc[Magnolia Imaging module] to provide optimised imagery.
+
+// end::introduction[]
+
+// end::noTitle[]
+

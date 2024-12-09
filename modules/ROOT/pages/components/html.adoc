@@ -1,0 +1,71 @@
+= HTML
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows a content editor to create a component which shows contents by using HTML.
+
+Reuse the HTML component from https://docs.magnolia-cms.com/product-docs/6.2/modules/list-of-modules/mte-module/mtk-module/[MTK Module].
+
+== Features
+. Renders the content from the HTML.
+
+== Usage
+This component can only be added to the Column area of a Row component.
+
+WARNING:  For security reasons, only superuser role can be added/edited this component.
+
+=== Add the HTML component
+To add the HTML component:
+
+. In a Column area click *Add component*. Select *HTML* then *Next*.
+image:components/html/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can put the HTML.
+image:components/html/02_EditComponent.png[Edit HTML component]
+
+. In preview mode, you can see how the HTML component are displayed on the page.
+image:components/html/03_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*HTML*
+[source,yaml]
+----
+form:
+  properties:
+    editHTML:
+      $type: codeField
+      language: html
+      required: true
+----
+
+--
+Template FTL::
++
+--
+*HTML*
+[source,ftl]
+----
+[#-------------- RENDERING  --------------]
+[#if content.editHTML?has_content]
+    ${cmsfn.decode(content).editHTML}
+[/#if]
+----
+
+--
+Template YAML::
++
+--
+*HTML*
+
+Template ID: `mtk2:components/html`
+[source,yaml]
+----
+templateScript: /mtk2/templates/components/html.ftl
+dialog: mtk2:components/html
+renderType: freemarker
+----
+--

@@ -1,0 +1,34 @@
+= {page-component-title} changelog
+
+The changelog gives you an overview of the changes made to the *{page-component-title}* at each release.
+
+== {modules-version}
+
+Released on *icon:calendar-check-o[] TBD*.
+
+[cols="2s,1,7a"]
+|===
+|Ticket |Type |Description
+
+|link:{jira}{jira-project}-5[{jira-project}-5^]
+|[.d-post]#icon:arrow-up[title=Improvement]#
+|Set up Antora documentation pages so we can write up man pages for the components and templates.
+|link:{jira}{jira-project}-6[{jira-project}-6^]
+|[.d-post]#icon:arrow-up[title=Improvement]#
+|Improve an accordion to align with Bootstrap 5.3 standards.
+|link:{jira}{jira-project}-7[{jira-project}-7^]
+|[.d-post]#icon:arrow-up[title=Improvement]#
+|Enhance a clickable button to enable linking to both internal and external content. Provide the flexibility to customize the button's styling and label.
+|link:{jira}{jira-project}-8[{jira-project}-8^]
+|[.d-post]#icon:arrow-up[title=Improvement]#
+|Improve a carousel to align with Bootstrap 5.3 standards.
+
+|===
+
+== 2.0.2 
+
+Updated dialogs definitions for new UI in Magnolia 6.2.x
+
+== 2.0.1
+
+Bootstrap 4.3.1

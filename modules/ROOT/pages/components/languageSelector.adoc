@@ -1,0 +1,151 @@
+= Language Selector
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows you select page language that the visitors can change the language of the page currently being viewed.
+
+== Features
+. Allows you select page language
+. Styling for common inline dropdown elements.
+. Change text alignment, transform, style, weight, line-height, decoration and color with our text utilities and color utilities.
+
+== Usage
+This component can only be added to the navigation area.
+
+=== Add Language Selector.
+To add the Language Selector:
+
+. In a navigation area click *Add component*. Select *Language Selector* then *Next*.
+image:components/languageSelector/01_Add_component.png[Add component dialog]
+
+. In the dialog you can enter the classes and styling css 
+image:components/languageSelector/02_Edit_component.png
+
+. In preview mode, you can see how the Language Selector are displayed on the page.
+image:components/languageSelector/03_Preview.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Language selector*
+[source,yaml]
+----
+label: Language selector
+width: medium
+form:
+  name: Language selector
+  properties:
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+
+----
+
+--
+Template FTL::
++
+--
+*Language selector*
+[source,ftl]
+----
+[#include "/btk/includes/templates/getLangLinkFromSelector.ftl"]
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#assign lists = sitefn.site().getI18n().getLocales() /]
+[#assign currentLanguage = cmsfn.language()!]
+[#assign fallbackLanguage = sitefn.site().getI18n().getFallbackLocale()!]
+[#assign mySite=sitefn.site()]
+[#assign mySiteName=mySite.getName()]
+[#assign originalBrowserURI = state.originalBrowserURI]
+[#assign originalBrowserURI = originalBrowserURI?replace("/" + mySiteName, "")]
+[#assign originalBrowserURI = originalBrowserURI?replace(".html", "")]
+[#if !cmsfn.isCurrentLocale(fallbackLanguage)]
+[#assign originalBrowserURI = originalBrowserURI?replace("/" + currentLanguage, "")]
+[/#if]
+[#assign URIPrefix = ctx.contextPath]
+[#if state.originalBrowserURI?contains(mySiteName) && originalBrowserURI != ""]
+[#assign URIPrefix = ctx.contextPath + "/" + mySiteName]
+[/#if]
+[#if lists?has_content]
+    <div class="dropdown ms-auto me-2 ${utils.getClassName(class)}" style="${cmsfn.decode(content).css!}">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="languagesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i style="vertical-align: unset" class="bi bi-globe mx-1"></i>
+            [#list lists as item]
+                [#if item.country?has_content]
+                    [#assign currentLocale = item.language + "_" + item.country]
+                [#else]
+                    [#assign currentLocale = item.language]
+                [/#if]
+                [#if cmsfn.isCurrentLocale(currentLocale)]
+                    <span>${item.getDisplayName()!}</span>
+                [/#if]
+            [/#list]
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="languagesDropdown">
+            [#list lists as item]
+                [#if item.country?has_content]
+                    [#assign currentLocale = item.language + "_" + item.country]
+                [#else]
+                    [#assign currentLocale = item.language]
+                [/#if]
+                [#if cmsfn.isCurrentLocale(currentLocale)]
+                    <li>
+                        <span class="dropdown-item active">${item.getDisplayName()}</span>
+                    </li>
+                [#else]
+                    [#if item.language != fallbackLanguage]
+                        [#assign localeURL = URIPrefix + "/" + item.language + originalBrowserURI]
+                    [#else]
+                        [#assign localeURL = URIPrefix  + originalBrowserURI]
+                    [/#if]
+                    <li>
+                        <a class="dropdown-item" href="${localeURL!}">
+                            ${item.getDisplayName()}
+                        </a>
+                    </li>
+                [/#if]
+            [/#list]
+        </ul>
+    </div>
+[/#if]
+----
+
+--
+Template FTL::
++
+--
+*Language selector*
+[source,ftl]
+----
+[#compress]
+    [#macro getLink link selectorNode=""]
+        [#if selectorNode?has_content && selectorNode == "partner" || selectorNode == "mgnl:composition" || selectorNode == "holder"]
+            [#assign ext = link?keep_after_last(".")]
+            [#assign path = link?keep_before_last(".")]
+            [#assign newPath = path?replace("~","/")]
+            [#if newPath?ends_with("/")]
+                [#assign newPath = newPath?keep_before_last("/")]
+            [/#if]
+            ${newPath}.${ext}
+        [#else]
+            ${link}
+        [/#if]
+    [/#macro]
+[/#compress]
+----
+
+--
+Template YAML::
++
+--
+*Language selector*
+
+Template ID: `btk:includes/areas/breadcrumb`
+[source,yaml]
+----
+title: Language Selector
+renderType: freemarker
+templateScript: /btk/templates/areas/languageSelector.ftl
+dialog: btk:areas/languageSelector
+----
+--

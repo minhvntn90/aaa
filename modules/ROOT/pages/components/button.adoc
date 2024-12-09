@@ -1,0 +1,243 @@
+= Button
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows you to create a clickable button to enable linking to both internal and external content.
+
+This component has the flexibility to customize the button's styling and label. Link styling can also be used in place of a button.
+
+== Features
+. Supports all OOTB Bootstrap style variants, including: Primary, Secondary, Success, Danger, Warning, Info, Light, Dark and Link.
+. Supports OOTB Boostrap outline styling
+. Supports OOTB Boostrap Toggle states
+. Supports OOTB Boostrap Button tags
+. Supports Large, Small styling, custom Class and CSS styles
+. Shows an animation when the button is depressed
+. Allows you to link to internal content page or external URL.
+
+== Usage
+This component can only be added to the Column area of a Row component.
+
+=== Add Button
+To add the Button:
+
+. In a Column area click *Add component*. Select *Button* then *Next*.
+image:components/button/01_Add_component.png[Add component dialog]
+
+. In the dialog you can enter the content for this Button, including the Basic Information
+image:components/button/02_Edit_component.png[Edit Button item]
+
+. and the Style
+image:components/button/03_Edit_component.png[Edit Button item]
+
+. In preview mode, you can see how the Buttons are displayed on the page.
+image:components/button/04_Preview.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Button*
+[source,yaml]
+----
+label: Button
+width: medium
+form:
+  name: Button
+  properties:
+  - name: variant
+    label: Variant
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: primary
+          name: 0
+          label: Primary
+        - value: secondary
+          name: 1
+          label: Secondary
+        - value: success
+          name: 2
+          label: Success
+        - value: danger
+          name: 3
+          label: Danger
+        - value: warning
+          name: 4
+          label: Warning
+        - value: info
+          name: 5
+          label: Info
+        - value: light
+          name: 6
+          label: Light
+        - value: dark
+          name: 7
+          label: Dark
+        - value: link
+          name: 8
+          label: Link
+  - name: outline
+    label: Outline buttons
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: primary
+          name: 0
+          label: Primary
+        - value: secondary
+          name: 1
+          label: Secondary
+        - value: success
+          name: 2
+          label: Success
+        - value: danger
+          name: 3
+          label: Danger
+        - value: warning
+          name: 4
+          label: Warning
+        - value: info
+          name: 5
+          label: Info
+        - value: light
+          name: 6
+          label: Light
+        - value: dark
+          name: 7
+          label: Dark
+  - name: size
+    label: Size
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: lg
+          name: 0
+          label: Large
+        - value: sm
+          name: 1
+          label: Small
+  - name: type
+    label: Type
+    defaultValue: link
+    required: true
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: link
+          name: 0
+          label: Link
+          selected: true
+        - value: button
+          name: 1
+          label: Button
+        - value: input
+          name: 2
+          label: Input
+        - value: submit
+          name: 3
+          label: Submit
+        - value: reset
+          name: 4
+          label: Reset
+  - !include:/btk/includes/dialogs/link.yaml
+  - !include:/btk/includes/dialogs/text.yaml
+    required: true
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: type
+          - name: text
+          - name: link
+      secondTab:
+        label: Style
+        fields:
+          - name: variant
+          - name: outline
+          - name: size
+          - name: class
+          - name: css
+----
+
+--
+Template FTL::
++
+--
+*Button*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+
+[#if content.text?has_content && content.type?has_content]
+  [#include "/btk/includes/templates/href.ftl"]
+  [#if content.type == 'button']
+    <button type="submit"
+            class="${utils.getClassName('btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')}"
+            style="${cmsfn.decode(content).css!""}"
+            data-bs-toggle="button" aria-pressed="true">${content.text}</button>
+  [#elseif content.type == 'input']
+    <input type="button"
+            class="${utils.getClassName('btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')}"
+            style="${cmsfn.decode(content).css!""}"
+            data-bs-toggle="button" aria-pressed="true">${content.text}</input>
+  [#elseif content.type == 'submit']
+    <input type="submit"
+           class="${utils.getClassName('btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')}"
+           style="${cmsfn.decode(content).css!""}"
+           data-bs-toggle="button" aria-pressed="true">${content.text}</input>
+  [#elseif content.type == 'reset']
+    <input type="reset"
+           class="${utils.getClassName('btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')}"
+           style="${cmsfn.decode(content).css!""}"
+           data-bs-toggle="button" aria-pressed="true">${content.text}</input>
+  [#else]
+    <a role="button"
+       class="${utils.getClassName('btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')}"
+       style="${cmsfn.decode(content).css!""}"
+       data-bs-toggle="button" aria-pressed="true"
+       href="${href}">${content.text}</a>
+  [/#if]
+[/#if]
+----
+
+--
+Template YAML::
++
+--
+*Button*
+
+Template ID: `btk:components/button/button`
+[source,yaml]
+----
+title: Button
+renderType: freemarker
+templateScript: /btk/templates/components/button/button.ftl
+dialog: btk:components/button
+----
+--

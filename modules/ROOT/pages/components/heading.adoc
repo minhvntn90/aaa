@@ -1,0 +1,122 @@
+= Heading
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows you to create a Heading text to control page structure and SEO.
+
+== Features
+. All HTML headings, <h1> through <h6>, are available.
+. Traditional heading elements are designed to work best in the meat of your page content. When you need a heading to stand out, consider using a display heading—a larger, slightly more opinionated heading style.
+. Styling for common inline HTML5 elements.
+. Change text alignment, transform, style, weight, line-height, decoration and color with our text utilities and color utilities.
+
+== Usage
+This component can only be added to the Column area of a Row component.
+
+=== Add Heading
+To add the Heading:
+
+. In a Column area click *Add component*. Select *Heading* then *Next*.
+image:components/heading/01_Add_component.png[Add component dialog]
+
+. In the dialog you can enter the text for this heading
+image:components/heading/02.1_Edit_component.png[Edit Heading item]
+
+. and the Style
+image:components/heading/02.2_Edit_component.png[Edit Heading item]
+
+. In preview mode, you can see how the Headings are displayed on the page.
+image:components/heading/04_Preview.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Heading*
+[source,yaml]
+----
+label: Heading
+width: medium
+form:
+  name: Heading
+  properties:
+  - !include:/btk/includes/dialogs/text.yaml
+    required: true
+  - name: level
+    label: Level
+    defaultValue: 1
+    $type: comboBoxField
+    datasource:
+      sortable: true
+      $type: optionListDatasource
+      options:
+      - value: 1
+        name: 0
+        label: 1
+      - value: 2
+        name: 1
+        label: 2
+      - value: 3
+        name: 2
+        label: 3
+      - value: 4
+        name: 3
+        label: 4
+      - value: 5
+        name: 4
+        label: 5
+      - value: 6
+        name: 5
+        label: 6
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: text
+      secondTab:
+        label: Style
+        fields:
+          - name: level
+          - name: class
+          - name: css
+----
+
+--
+Template FTL::
++
+--
+*Heading*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+
+[#if content.text?has_content]
+  [#assign level = content.level!'1']
+  
+  <h${level} style="${cmsfn.decode(content).css!""}" class="${utils.getClassName('my-2')}">
+    ${content.text}
+  </h${level}>
+[/#if]
+----
+
+--
+Template YAML::
++
+--
+*Heading*
+
+Template ID: `btk:components/heading/heading`
+[source,yaml]
+----
+title: Heading
+renderType: freemarker
+templateScript: /btk/templates/components/heading/heading.ftl
+dialog: btk:components/heading
+----
+--

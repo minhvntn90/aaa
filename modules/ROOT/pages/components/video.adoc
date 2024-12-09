@@ -1,0 +1,284 @@
+= Video
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+This is a component to show videos from a Magnolia DAM assset, or embed a video from Vimeo, YouTube or TwentyThree.
+
+== Features
+* Video
+* Supports thumbnail for video
+* Supports captions/subtitle via track element
+* Supports selecting mp4 and webm video files from the DAM
+* Supports selecting a video from Vimeo / TwentyThree / YouTube via an embed code.
+* Component can be added to any page template in Column area of a Row component only
+* Supports selecting autoplay / loop / mute setting (disabled by default)
+* Preload auto / metadata / none can be configured
+* Supports configuring whether player controls are shown
+* Class and CSS can be overridden in the Dialog
+
+== Usage
+Video Component can be added to any page template in Column area of a Row component only.
+
+=== Add Row
+To add the Row:
+
+. In an Actions area click *Add component*. Select *Video* then *Next*.
+image:components/video/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can enter source video, poster, caption, subtitle...
+. Select Asset
+image:components/video/02_EditComponent.png[Edit List]
+image:components/video/02.1_EditComponent.png[Edit List]
+
+. Select Embed
+image:components/video/02.2_EditComponent.png[Edit List]
+
+. add the Class, Slyte and also Column Class, Style
+image:components/video/03_EditComponent.png[Edit List]
+
+
+. In preview mode, you can see how the video are displayed on the page.
+image:components/video/04_PreviewComponent.png[Using WYSIWYG preview]
+image:components/video/04.1_PreviewComponent.png[Using WYSIWYG preview]
+image:components/video/04.2_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Video*
+[source,yaml]
+----
+label: Video
+width: medium
+form:
+  properties:
+    - name: type
+      label: Video type
+      $type: switchableField
+      required: true
+      field:
+        name: type
+        label: Video
+        $type: radioButtonGroupField
+        defaultValue: asset
+        datasource:
+          $type: optionListDatasource
+          options:
+            - name: asset
+              label: Asset
+              value: asset
+            - name: embed
+              label: Embed
+              value: embed
+      itemProvider:
+        $type: currentItemProvider
+      forms:
+        embed:
+          properties:
+            - name: embed
+              label: Embed
+              $type: textField
+              required: true
+              rows: 5
+        asset:
+          properties:
+            - name: asset
+              label: Asset
+              $type: compositeField
+              propertyNameDecorator: info.magnolia.ui.field.PrefixNameDecorator
+              itemProvider:
+                $type: currentItemProvider
+              properties:
+                - name: source
+                  label: Source
+                  $type: damLinkField
+                  required: true
+                  description: Support mp4 and webm file only.
+                - name: subttitle
+                  label: Subtitle
+                  $type: damLinkField
+                - name: autoplay
+                  label: Autoplay
+                  $type: checkBoxField
+                - name: loop
+                  label: Loop
+                  $type: checkBoxField
+                - name: mute
+                  label: Mute
+                  $type: checkBoxField
+                - name: controls
+                  label: Controls
+                  $type: checkBoxField
+                  defaultValue: true
+                - name: poster
+                  label: Poster
+                  $type: damLinkField
+                - name: altPoster
+                  label: Alt Poster
+                  $type: textField
+                - name: preload
+                  label: Preload
+                  $type: comboBoxField
+                  datasource:
+                    $type: optionListDatasource
+                    options:
+                      - name: auto
+                        label: Auto
+                        value: auto
+                      - name: metadata
+                        label: Metadata
+                        value: metadata
+                      - name: none
+                        label: None
+                        value: none
+   
+                - name: videoCaption
+                  label: Video Caption
+                  $type: textField
+                  i18n: true
+                - name: videoCredit
+                  label: Video Credit
+                  $type: textField
+                  i18n: true
+    - !include:/btk/includes/dialogs/class.yaml
+    - !include:/btk/includes/dialogs/css.yaml
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: type
+      secondTab:
+        label: Style
+        fields:
+          - name: class
+          - name: css
+----
+--
+Template FTL::
++
+--
+*Video*
+[source,ftl]
+----
+[#-------------- INCLUDE AND ASSIGN PART --------------]
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#include "/btk/includes/templates/css.ftl"]
+[#-- [#include "/mtk2/templates/includes/init.ftl"] --]
+
+[#-- video css classes --]
+[#assign videoHtml = ""]
+[#if content.type?exists]
+    [#include "/btk/templates/components/video/videoTemplate.ftl"]
+    [#assign videoHtml][@video content/][/#assign]
+[/#if]
+
+[#-------------- RENDERING PART --------------]
+[#-- Rendering: video item --]
+<div class="${utils.getClassName('btk-video mt-5')}"
+    style="${cmsfn.decode(content).css!""}"
+    data-btk-video
+>
+    ${videoHtml}
+</div>
+----
+
+[#-- Renders a video with an HTML5 tag or by embedding a video service code--]
+[#macro video content]
+    [#if content.type?has_content]
+        [#assign videoCaption = content.assetvideoCaption!]
+        [#assign videoCredit = content.assetvideoCredit!]
+
+        [#if content.type == "asset"]
+            [#assign video = damfn.getAsset(content.assetsource)]
+
+            [#assign videoTitle = ""]
+            [#if video.title?has_content]
+                [#assign videoTitle = video.title]
+            [/#if]
+
+            [#assign assetType = video.mimeType]
+            [#assign videoSrc = video.link]
+
+            [#-- Video caption / credit; Falls back to asset's properties --]
+            [#if !videoCaption?has_content]
+                [#assign videoCaption =video.caption!videoTitle!]
+            [/#if]
+
+            [#if !videoCredit?has_content]
+                [#assign videoCredit = video.copyright!]
+            [/#if]
+
+            [#if content.assetpreload?has_content]
+                [#assign preload = 'preload="${content.assetpreload}"']
+            [/#if]
+        [/#if]
+
+        [#-------------- RENDERING  --------------]
+        <div class="btk-video__wrapper [#if content.type == "embed"]embed[/#if]">
+            [#if content.type == "asset"]
+                <video ${content.assetautoplay?string("autoplay muted","")} ${content.assetloop?string("loop","")} ${content.assetmute?string("muted","")} ${content.assetcontrols?string("controls","")} ${preload!}>
+                    <source src="${videoSrc}" type="${assetType}">
+                    
+                    [#if content.assetsubttitle?has_content]
+                        [#assign subttitle = damfn.getAssetLink(content.assetsubttitle)]
+                        <track label="" kind="subtitles" src="${subttitle!}" default>
+                    [/#if]
+
+                </video>
+
+                [#if !content.assetautoplay]
+                    <div class="btk-video__play">
+                        <i class="bi bi-play-circle-fill" data-btn-play></i>
+                    </div>
+                [/#if]
+                
+                [#if content.assetposter?has_content && !content.assetautoplay]
+                [#assign src = damfn.getAssetLink(content.assetposter)]
+                    [#if src?has_content]
+                        [#assign asset = damfn.getAsset(content.assetposter)]
+                        [#assign assetMap = damfn.getAssetMap(asset)]
+                        [#assign alt = assetMap.title!assetMap.name!assetMap.caption!assetMap.@name]
+                    [/#if]
+                    <picture class="btk-video__poster">
+                        <source srcset="${src!}"/>
+                        <img class="img-fluid" src="${src!}" alt="${alt!}" />
+                    </picture>
+                [/#if]
+            [#else]
+                ${cmsfn.decode(content).embed}
+            [/#if]
+        </div>
+        [#if content.type == "asset"]
+            [#if videoCaption?has_content || videoCredit?has_content]
+                <div class="video-captions">
+                    [#if videoCaption?has_content]
+                        <span class="video-caption">${videoCaption}</span>
+                    [/#if]
+                    [#if videoCredit?has_content]
+                        <span class="video-credit">${videoCredit}</span>
+                    [/#if]
+                </div>
+            [/#if]
+        [/#if]
+    [/#if]
+[/#macro]
+
+--
+Template YAML::
++
+--
+*Video*
+
+Template ID: `btk:components/video/video`
+[source,yaml]
+----
+title: Video
+renderType: freemarker
+templateScript: /btk/templates/components/video/video.ftl
+dialog: btk:components/video
+----
+--

@@ -1,0 +1,175 @@
+= Tabs
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows a content editor to create a switchable set of tab panels, with content that switches out depending on the tab that has been selected.
+
+== Features
+. Supports a single tab panel being displayed at once
+. Content inside the Tab panel can be shown and hidden by clicking or touching the nav
+. The body rich text for each Tab panel can be entered via the dialog
+. Tab panel can be configured to be open or closed by default
+. CSS classes are used to make tabs fade in, add `.fade` to each `.tab-pane`. The first tab pane must also have `.show` to make the initial content visible. 
+
+== Usage
+This component can only be added to the Column area of a Row component. Up to 5 Tab panels can be added to a Tab. This can be modified by changing the `maxComponents` property from the default value.
+
+=== Add Tabs container
+To add the Tabs container:
+
+. In a Column area click *Add component*. Select *Tabs* then *Next*.
+image:components/tabs/01_Add component.png[Add component dialog]
+
+. The Tab classes and css properties form will be shown with the relevant configuration options.
+image:components/tabs/02_EditComponent.png[Configure the settings of the tabs]
+
+=== Add a Tab panel
+. With the *Items* area selected on the Page, click *Add component*. In this dialog click *Next*.
+image:components/tabs/03_Add_item.png[Add Tab Panel]
+
+. In the Item edit dialog you can enter the content for this Tab panel, including the Body content.
+image:components/tabs/03.1_Edit_item.png[Edit Tab Panel]
+
+. Continue adding more Tab panels until you have enough content.
+image:components/tabs/03_Add_item.png[Add Tab Panel]
+
+. In preview mode, you can see how the tabs are displayed on the page.
+image:components/tabs/04_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Tabs*
+[source,yaml]
+----
+label: Tabs
+width: medium
+form:
+  name: Tabs
+  properties:
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+----
+*Tab Panel*
+[source,yaml]
+----
+label: Tab Panel
+width: medium
+form:
+  name: Tab Panel
+  properties:
+  - name: display
+    label: Display
+    type: java.lang.Boolean
+    $type: checkBoxField
+    buttonLabel: Show/Hide the Body by default.
+  - !include:/btk/includes/dialogs/text.yaml
+    name: navLabel
+    label: Tab Title
+    required: true
+  - !include:/btk/includes/dialogs/body.yaml
+    required: true
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: display
+          - name: navLabel
+          - name: body
+      secondTab:
+        label: Style
+        fields:
+          - name: class
+          - name: css
+----
+--
+Template FTL::
++
+--
+*tabs*
+[source,ftl]
+----
+[@cms.area name="Tab-Items" contextAttributes={"content": content!} /]
+----
+
+*Tabs Area*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+
+[#if components?has_content]
+  <ul class="nav nav-pills ${ctx.content.class!""}" id="tab-${content.@id}" style="${cmsfn.decode(ctx.content).css!""}" role="tablist">
+    [#list components as component]
+      <li class="nav-item" role="presentation">
+        <button class="nav-link [#if component?index == 0]active[/#if]" id="v-pills-${component['jcr:uuid']}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-${component['jcr:uuid']}" type="button" role="tab" aria-controls="v-pills-${component['jcr:uuid']}" aria-selected="[#if component?index == 0]true[#else]false[/#if]">${component.navLabel!}</button> 
+      </li>
+    [/#list]
+  </ul>
+  <div class="tab-content mt-3" id="v-pills-${content.@id}-tabContent">
+    [#list components as component]
+      [#if component?index == 0]
+        [@cms.component content=component contextAttributes={"tabId": component['jcr:uuid'], "isActive": 'true'} /]
+      [#else]
+        [@cms.component content=component contextAttributes={"tabId": component['jcr:uuid'], "isActive": 'false'} /]
+      [/#if]
+    [/#list]
+  </div>
+[#elseif cmsfn.isEditMode()]
+  This Tabs is empty
+[/#if]
+----
+
+*Tab Panel*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#if content.body?has_content]
+  [#if ctx.isActive?? && ctx.isActive == 'true']
+    [#assign show= 'show active']
+  [/#if]
+  [#assign itemId = 'v-pills-${ctx.tabId}']
+  <div class="tab-pane ${utils.getClassName(class)} ${show!}" style="${cmsfn.decode(content).css!""}" id="${itemId!''}" role="tabpanel" aria-labelledby="${itemId}-tab" tabindex="0">
+    ${cmsfn.decode(content).body!''}
+  </div>
+[/#if]
+----
+--
+Template YAML::
++
+--
+*Tabs*
+
+Template ID: `btk:components/tabs/tabs`
+[source,yaml]
+----
+title: Tabs
+renderType: freemarker
+templateScript: /btk/templates/components/tabs/tabs.ftl
+dialog: btk:components/tabs/tabs
+areas:
+  Tab-Items:
+    templateScript: /btk/templates/areas/tab-items.ftl
+    maxComponents: 5
+    availableComponents:
+      tabPanel:
+        id: btk:components/tabs/tabPanel
+----
+
+*Item*
+
+Template ID: `btk:components/tabs/tabPanel`
+[source,yaml]
+----
+title: Tab Panel
+renderType: freemarker
+templateScript: /btk/templates/components/tabs/tabPanel.ftl
+dialog: btk:components/tabs/tabPanel
+----
+--

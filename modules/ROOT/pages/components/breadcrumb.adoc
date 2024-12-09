@@ -1,0 +1,112 @@
+= Breadcrumb
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Indicate the current page’s location within a navigational hierarchy that automatically adds separators via CSS.
+
+== Features
+. Use an ordered or unordered list with linked list items to create a minimally styled breadcrumb. Use our utilities to add additional styles as desired.
+. Dividers are automatically added in CSS through ::before and content. 
+
+== Usage
+This component is hard-code into the breadcrumb area.
+
+=== Add Breadcrumb
+To add the Breadcrumb:
+
+. In a page template area click *Add component*. Select *Breadcrumb* then *Next*.
+image:components/breadcrumb/01_Add_component.png[Add component dialog]
+
+. In the dialog you can enter the divider setting for this Breadcrumb
+image:components/breadcrumb/02.1_Edit_component.png[Edit Breadcrumb divider]
+
+. and the Style
+image:components/breadcrumb/02.2_Edit_component.png[Edit Breadcrumb styling]
+
+. In preview mode, you can see how the Breadcrumb are displayed on the page.
+image:components/breadcrumb/04_Preview.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Breadcrumb*
+[source,yaml]
+----
+label: Breadcrumb
+width: medium
+form:
+  name: Breadcrumb
+  properties:
+    - name: separatorCharactor
+      label: Separator Charactor
+      $type: textField
+    - !include:/btk/includes/dialogs/class.yaml
+    - !include:/btk/includes/dialogs/css.yaml
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: separatorCharactor
+      secondTab:
+        label: Style
+        fields:
+          - name: class
+          - name: css
+
+----
+--
+Template FTL::
++
+--
+*Breadcrumb Area*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#global breadcrumb = []]
+
+[#macro getPage page]
+    [#global breadcrumb = breadcrumb + [page]]
+
+    [#if cmsfn.parent(page)?has_content]
+        [@getPage cmsfn.parent(page) /]
+    [/#if]
+[/#macro]
+[@getPage cmsfn.page(content) /]
+<div style="--bs-breadcrumb-divider: '${content.separatorCharactor ! '>'}'; ${cmsfn.decode(content).css!}" class="${utils.getClassName('container breadcrumb-wrapper')}">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        [#list breadcrumb?reverse as item]
+            [#assign title = item.navTitle!item.@name]
+            [#if item != cmsfn.page(content)]
+              <li class="breadcrumb-item">
+                <a href="${cmsfn.link(item)!'#'}">${title}</a>
+              </li>
+            [#else]
+              <li class="breadcrumb-item active" aria-current="page">${title}</li>
+            [/#if]
+        [/#list]
+    </ol>
+  </nav>
+</div>
+----
+
+--
+Template YAML::
++
+--
+*Areas Breadcrumb*
+
+Template ID: `btk:includes/areas/breadcrumb`
+[source,yaml]
+----
+title: Breadcrumb
+renderType: freemarker
+templateScript: /btk/templates/areas/breadcrumb.ftl
+dialog: btk:areas/breadcrumb
+editable: true
+----
+--

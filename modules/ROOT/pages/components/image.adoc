@@ -1,0 +1,244 @@
+= Image
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+This is a component to show images which can be resized by https://docs.magnolia-cms.com/product-docs/6.2/developing/templating/theme/#_image_variations[imaging variations] in theme and https://docs.magnolia-cms.com/dam-focal/[Image Focal module]
+
+This component has the flexibility to customize the styling and css class.
+
+== Features
+. Supports all OOTB Bootstrap style variants including None (default), Rounded and Thumbnail.
+. Uses picture element to render resized image for each breakpoint width.
+. Resized images obey focal point / area selected for each breakpoint in the DAM asset.
+
+== Usage
+This component can only be added to the Column area of a Row component.
+
+=== Add the image
+To add the image:
+
+. In a Column area click *Add component*. Select *Image* then *Next*.
+image:components/image/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can choose an asset and the render option, including the Basic Information and the Style
+image:components/image/02_EditComponent.png[Edit Image item]
+image:components/image/03_EditComponent.png[Edit Style and Css]
+
+. In preview mode, you can see how the image component are displayed on the page.
+image:components/image/04_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Image*
+[source,yaml]
+----
+label: Image
+width: medium
+form:
+  name: Image
+  properties:
+  - !include:/btk/includes/dialogs/image.yaml
+  - name: style
+    label: Style
+    defaultValue: none
+    $type: radioButtonGroupField
+    datasource:
+      sortable: true
+      $type: optionListDatasource
+      options:
+      - value: none
+        name: none
+        label: None
+      - value: img-thumbnail
+        name: thumbnail
+        label: Thumbnail
+      - value: rounded
+        name: rounded
+        label: Rounded
+  - name: renderOption
+    $type: switchableField
+    label: Render Option
+    field:
+      $type: radioButtonGroupField
+      layout: horizontal
+      defaultValue: normal
+      datasource:
+        $type: optionListDatasource
+        options:
+          - name: normal
+            label: Normal
+            value: normal
+          - name: focalAreas
+            label: Focal Areas
+            value: focalAreas
+          - name: focalPoint
+            label: Focal Point
+            value: focalPoint
+    itemProvider:
+      $type: jcrChildNodeProvider
+    forms:
+      - name: normal
+        properties:
+          - name: picturesEnabled
+            $type: checkBoxField
+            label: Enable all rendered sizes
+            buttonLabel: Select checkbox to enable all rendered sizes(XS, SM, MD, LG, XL, XXL)
+      - name: focalAreas
+        properties:
+          - name: variation
+            label: Variation
+            required: true
+            defaultValue: Cinema
+            $type: comboBoxField
+            datasource:
+              $type: optionListDatasource
+              options:
+                !include:/btk/includes/imageVariations/dialogImageVariations.yaml
+          - name: size
+            label: Size
+            required: true
+            defaultValue: 992
+            $type: comboBoxField
+            datasource:
+              $type: optionListDatasource
+              options:
+                !include:/btk/includes/imageVariations/dialogImageBreakpoints.yaml
+      - name: focalPoint
+        properties:
+          - name: variation
+            label: Variation
+            required: true
+            defaultValue: Cinema
+            $type: comboBoxField
+            datasource:
+              $type: optionListDatasource
+              options:
+                !include:/btk/includes/imageVariations/dialogImageVariations.yaml
+          - name: size
+            label: Size
+            required: true
+            defaultValue: 992
+            $type: comboBoxField
+            datasource:
+              $type: optionListDatasource
+              options:
+                !include:/btk/includes/imageVariations/dialogImageBreakpoints.yaml
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: image
+          - name: renderOption
+      secondTab:
+        label: Style
+        fields:
+          - name: style
+          - name: class
+          - name: css
+----
+
+--
+Template FTL::
++
+--
+*Image*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#include "/btk/includes/templates/css.ftl"]
+
+[#if content.image?has_content]
+  [#assign src = damfn.getAssetLink(content.image)]
+
+  [#if src?has_content]
+    [#assign asset = damfn.getAsset(content.image)]
+    [#assign assetMap = damfn.getAssetMap(asset)]
+    [#assign alt = assetMap.title!assetMap.name!assetMap.@name]
+    [#assign class = 'img-fluid']
+
+    [#if content.picturesEnabled?has_content]
+      [#assign picturesEnabled = content.picturesEnabled ]
+    [#else]
+      [#assign picturesEnabled = false ]
+    [/#if]
+
+    [#if content.style?has_content && content.style != 'none']
+      [#assign class += ' ${content.style}']
+    [/#if]
+    [#if content.renderOption.field?has_content]
+      [#if content.renderOption.field =="normal"]
+        [#if content.renderOption.picturesEnabled == false]
+          <img class="${utils.getClassName(class)}" src="${src}" alt="${alt}" style="${cmsfn.decode(content).css!""}">
+        [#else]
+          [#assign srcXS = damfn.getAssetLink(content.image, "xs")]
+          [#assign srcSM = damfn.getAssetLink(content.image, "sm")]
+          [#assign srcMD = damfn.getAssetLink(content.image, "md")]
+          [#assign srcLG = damfn.getAssetLink(content.image, "lg")]
+          [#assign srcXL = damfn.getAssetLink(content.image, "xl")]
+          [#assign srcXXL = damfn.getAssetLink(content.image, "xxl")]
+
+          <picture>
+            <source srcset="${srcXXL!}" media="(min-width: 1200px) and (max-width: 1399px)" >
+            <source srcset="${srcXL!}" media="(min-width: 992px) and (max-width: 1199px)" >
+            <source srcset="${srcLG!}"  media="(min-width: 768px) and (max-width: 991px)" >
+            <source srcset="${srcMD!}" media="(min-width: 576px) and (max-width: 767px)" >
+            <source srcset="${srcSM!}" media="(min-width: 100px) and (max-width: 575px)" >
+            <source srcset="${srcXS!}" media="(min-width: 10px) and (max-width: 99px)" >
+
+            <img class="${utils.getClassName(class)}" src="${src}" alt="${alt}" style="${cmsfn.decode(content).css!""}">
+          </picture>
+        [/#if]
+      [/#if]
+      [#if content.renderOption.field == "focalAreas" || content.renderOption.field == "focalPoint" ]
+        [#if damfafn?has_content]
+          [#assign imageContext = ctx.contextPath + "/dam/"]
+          [#assign image = content.image!]
+          [#assign variations = damfafn.variations!]
+          [#if content.renderOption.field == "focalAreas"]
+            [#assign variations = damfafn.variations!]
+          [#elseif content.renderOption.field == "focalPoint"]
+            [#assign variations = damfpfn.variations!]
+          [/#if]
+          [#list variations as variation]
+            [#if variation.name == content.renderOption.variation]
+              [#assign minWidth = content.renderOption.size?number!]
+              [#assign url = damfafn.getVariationLink(asset, variation.name, minWidth, minWidth)!]
+              [#if content.renderOption.field == "focalPoint"]
+                [#assign url = damfpfn.getVariationLink(asset, variation.name, minWidth, minWidth)!]
+              [/#if]
+              <img class="${utils.getClassName(class)}" src="${url}" alt="${alt}" style="${cmsfn.decode(content).css!""}">
+            [/#if]
+          [/#list]
+        [#else]
+          Requires the <a href="https://docs.magnolia-cms.com/dam-focal/">Image Focal module</a>: https://docs.magnolia-cms.com/dam-focal/.
+        [/#if]
+      [/#if]
+    [/#if]
+
+  [/#if]
+[/#if]
+----
+
+--
+Template YAML::
++
+--
+*Image*
+
+Template ID: `btk:components/image/image`
+[source,yaml]
+----
+title: Image
+renderType: freemarker
+templateScript: /btk/templates/components/image/image.ftl
+dialog: btk:components/image
+----
+--

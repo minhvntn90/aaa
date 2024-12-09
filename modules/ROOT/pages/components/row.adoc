@@ -1,0 +1,195 @@
+= Row
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows you to create a Bootstrap's Grid to build layouts of all shapes and sizes thanks to a twelve column system.
+
+Bootstrap’s grid system uses a series of containers, rows, and columns to layout and align content. It’s built with flexbox and is fully responsive.
+
+== Features
+* Our grid supports six responsive breakpoints.
+* Containers center and horizontally pad your content.
+* Rows are wrappers for columns.
+* Columns are incredibly flexible.
+* Gutters are also responsive and customizable.
+* Row Class and CSS can be overridden in the Dialog
+* Column Class and CSS can be overridden in the Dialog
+* Supports the following column layouts:
+** column (default - 100%)
+** columns (66%, 33%)
+** columns (33%, 66%)
+** columns (50%, 50%)
+** columns (33%, 33%, 33%)
+* Switching between column layouts
+
+== Usage
+This component can be added to the main and footer areas.
+
+=== Add Row
+To add the Row:
+
+. In an Actions area click *Add component*. Select *Row* then *Next*.
+image:components/row/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can enter the layout for this Row.
+image:components/row/02_EditComponent.png[Edit Row item]
+
+. add the Class, Slyte and also Column Class, Style
+image:components/row/03_EditComponent.png[Edit Row item]
+
+. In preview mode, you can see how the Grid(Row and Columns) are displayed on the page.
+image:components/row/04_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Row*
+[source,yaml]
+----
+label: Row
+width: medium
+form:
+  name: Row
+  properties:
+    - name: layout
+      label: Layout
+      defaultValue: 12
+      $type: comboBoxField
+      datasource:
+        $type: optionListDatasource
+        options:
+          - name: 0
+            label: 100%
+            value: 12
+          - name: 1
+            label: 66% + 33%
+            value: 8 4
+          - name: 2
+            label: 33% + 66%
+            value: 4 8
+          - name: 3
+            label: 50% + 50%
+            value: 6 6
+          - name: 4
+            label: 33% + 33% + 33%
+            value: 4 4 4
+    - !include:/btk/includes/dialogs/class.yaml
+    - !include:/btk/includes/dialogs/css.yaml
+    - name: columnClass
+      label: Column Class
+      $type: textField
+    - name: columnCss
+      label: Column CSS
+      $type: textField
+      rows: 8
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: layout
+      secondTab:
+        label: Style
+        fields:
+          - name: class
+          - name: css
+          - name: columnClass
+          - name: columnCss
+----
+
+--
+Template FTL::
++
+--
+*Row*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#include "/btk/includes/templates/css.ftl"]
+
+[#assign colWidths = ['12']]
+
+[#if colWidths?has_content]
+  [#assign colWidths = content.layout?split(' ')]
+[/#if]
+<div>
+  <div class="${utils.getClassName('row')}">
+    [#list colWidths as colWidth]
+      <div class="col-md-${colWidth} ${content.columnClass!}"  style="${cmsfn.decode(content).columnCss!""}">
+        [@cms.area name="col-${colWidth?index + 1}" /]
+      </div>
+    [/#list]
+  </div>
+</div>
+----
+
+--
+Template YAML::
++
+--
+*Row*
+
+Template ID: `btk:components/row/row`
+[source,yaml]
+----
+title: Row
+renderType: freemarker
+templateScript: /btk/templates/components/row/row.ftl
+dialog: btk:components/row
+areas:
+  col-1: &col
+    templateScript: /btk/templates/areas/col.ftl
+    availableComponents:
+      row:
+        id: btk:components/row/row
+      heading:
+        id: btk:components/heading/heading
+      text:
+        id: btk:components/text/text
+      button:
+        id: btk:components/button/button
+      divider:
+        id: btk:components/divider/divider
+      image:
+        id: btk:components/image/image
+      accordion:
+        id: btk:components/accordion/accordion
+      card:
+        id: btk:components/card/card
+      modal:
+        id: btk:components/modal/modal
+      tabs:
+        id: btk:components/tabs/tabs
+      linkList:
+        id: btk:components/linkList/linkList
+      pageIntro:
+        id: btk:components/pageIntro/pageIntro
+      download:
+        id: btk:components/download/download
+      video:
+        id: btk:components/video/video
+      upload:
+        id: btk:components/upload/upload
+      teaser:
+        id: btk:components/teaser/teaser
+      html:
+        id: mtk2:components/html
+        roles:
+          - superuser
+  col-2: *col
+  col-3: *col
+  col-4: *col
+  col-5: *col
+  col-6: *col
+  col-7: *col
+  col-8: *col
+  col-9: *col
+  col-10: *col
+  col-11: *col
+  col-12: *col
+----
+--

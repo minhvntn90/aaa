@@ -1,0 +1,226 @@
+= Teaser
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+A Teaser is a flexible and extensible content container. It includes options for headers and footers, a wide variety of content, contextual background colors, and powerful display options. If you’re familiar with Bootstrap 3, cards replace our old panels, wells, and thumbnails. Similar functionality to those components is available as modifier classes for Teasers.
+Teasers are built with as little markup and styles as possible, but still manage to deliver a ton of control and customization. Built with flexbox, they offer easy alignment and mix well with other Bootstrap components. They have no margin by default, so use spacing utilities as needed.
+
+== Features
+* Teaser support a wide variety of content, including images, text, list groups, links, and more. Below are examples of what’s supported.
+* Mix and match multiple content types to create the card you need, or throw everything in there. Shown below are image styles, blocks, text styles, and a list group—all wrapped in a fixed-width card.
+* Teaser assume no specific width to start, so they’ll be 100% wide unless otherwise stated. You can change this as needed with custom CSS, grid classes, grid Sass mixins, or utilities.
+
+== Usage
+This Component can be added to any page template in Column area of a Row component only.
+
+=== Add Teaser
+To add the Teaser:
+
+. In a Column area click *Add component*. Select *Teaser* then *Next*.
+image:components/teaser/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can enter properties form will be shown with the relevant configuration options.
+image:components/teaser/02_Configure_component.png[Edit Component]
+
+. More configuration for layout
+image:components/teaser/02.1_Configure_component.png[Edit Component]
+
+. add the Class, Slyte and also Column Class, Style
+image:components/teaser/02.2_Configure_component.png[Edit Component]
+
+. In preview mode, you can see how the Teaser is displayed on the page.
+image:components/teaser/03_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Teaser*
+[source,yaml]
+----
+label: Teaser
+form:
+  name: Teaser
+  properties:
+  - !include:/btk/includes/dialogs/image.yaml
+  - !include:/btk/includes/dialogs/heading.yaml
+    required: true
+  - !include:/btk/includes/dialogs/body.yaml
+    label: Description
+  - !include:/btk/includes/dialogs/link.yaml
+  - !include:/btk/includes/dialogs/btnText.yaml
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+  - name: rounded
+    label: Box is rounded
+    $type: checkBoxField
+    buttonLabel: Select checkbox to have rounded box
+  - name: hideTeaserImage
+    label: Hide Teaser Image
+    $type: checkBoxField
+    buttonLabel: Select checkbox to hide teaser image
+  - name: hideDescription
+    label: Hide Description
+    $type: checkBoxField
+    buttonLabel: Select checkbox to hide description
+  - name: align
+    label: Align Content
+    defaultValue: start
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: start
+          name: start
+          label: Left
+          selected: true
+        - value: end
+          name: end
+          label: Right
+        - value: center
+          name: center
+          label: Center
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: image
+          - name: link
+          - name: heading
+          - name: body
+          - name: btnText
+      secondTab:
+        label: Config
+        fields:
+          - name: rounded
+          - name: align
+          - name: hideTeaserImage
+          - name: hideDescription
+      thirdTab:
+        label: Style
+        fields:
+          - name: class
+          - name: css
+
+----
+
+--
+Template FTL::
++
+--
+*Teaser*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#include "/btk/includes/templates/css.ftl"]
+[#include "/btk/includes/templates/href.ftl"]
+[#assign pageContent = cmsfn.page(content)!content]
+[#assign rounded = 'rounded-0']
+
+[#if content.rounded?? && content.rounded]
+    [#assign rounded += 'rounded-3']
+[/#if]
+
+<div class="${utils.getClassName('card')} overflow-hidden ${rounded} text-${content.align!'start'}">
+  [#if content.image?has_content || pageContent.teaserImage?has_content]
+    [#assign isHideTeaserImage = content.hideTeaserImage!false/]
+    [#if !content.image?has_content && isHideTeaserImage == false]
+      [#assign src = damfn.getAssetLink(pageContent.teaserImage)]
+      <img class="${utils.getClassName(imageClass)}" src="${src!}" alt="${content.alt!}">
+    [#else]
+      [#assign src = damfn.getAssetLink(content.image)]
+
+      [#if src?has_content]
+        [#assign asset = damfn.getAsset(content.image)]
+        [#assign assetMap = damfn.getAssetMap(asset)]
+        [#assign acm = cmsfn.contentById(content.image?remove_beginning("jcr:")!, "dam")]
+        [#assign alt = content.alt!acm.description!acm.caption!acm.title!acm.name!acm.@name]
+        [#assign imageClass = 'img-fluid']
+
+        [#if content.renderOption?has_content && content.renderOption.field?has_content]
+          [#if content.renderOption.field =="normal"]
+              [#if content.renderOption.picturesEnabled == false]
+                  <img class="${utils.getClassName(imageClass)}" src="${src}" alt="${alt}">
+              [#else]
+                  [#assign srcXS = damfn.getAssetLink(content.image, "xs")]
+                  [#assign srcSM = damfn.getAssetLink(content.image, "sm")]
+                  [#assign srcMD = damfn.getAssetLink(content.image, "md")]
+                  [#assign srcLG = damfn.getAssetLink(content.image, "lg")]
+                  [#assign srcXL = damfn.getAssetLink(content.image, "xl")]
+                  [#assign srcXXL = damfn.getAssetLink(content.image, "xxl")]
+
+                  <picture>
+                      <source srcset="${srcXXL!}" media="(min-width: 1200px) and (max-width: 1399px)" >
+                      <source srcset="${srcXL!}" media="(min-width: 992px) and (max-width: 1199px)" >
+                      <source srcset="${srcLG!}"  media="(min-width: 768px) and (max-width: 991px)" >
+                      <source srcset="${srcMD!}" media="(min-width: 576px) and (max-width: 767px)" >
+                      <source srcset="${srcSM!}" media="(min-width: 100px) and (max-width: 575px)" >
+                      <source srcset="${srcXS!}" media="(min-width: 10px) and (max-width: 99px)" >
+
+                      <img class="${utils.getClassName(imageClass)}" src="${src}" alt="${alt}">
+                  </picture>
+              [/#if]
+          [/#if]
+          [#if content.renderOption.field == "focalAreas" || content.renderOption.field == "focalPoint" ]
+            [#if damfafn?has_content]
+              [#assign imageContext = ctx.contextPath + "/dam/"]
+              [#assign image = content.image!]
+              [#assign variations = damfafn.variations!]
+              [#if content.renderOption.field == "focalAreas"]
+                  [#assign variations = damfafn.variations!]
+              [#elseif content.renderOption.field == "focalPoint"]
+                  [#assign variations = damfpfn.variations!]
+              [/#if]
+              [#list variations as variation]
+                  [#if variation.name == content.renderOption.variation]
+                      [#assign minWidth = content.renderOption.size?number!]
+                      [#assign url = damfafn.getVariationLink(asset, variation.name, minWidth, minWidth)!]
+                      [#if content.renderOption.field == "focalPoint"]
+                          [#assign url = damfpfn.getVariationLink(asset, variation.name, minWidth, minWidth)!]
+                      [/#if]
+                      <img class="${utils.getClassName(imageClass)}" src="${url}" alt="${alt}">
+                  [/#if]
+              [/#list]
+            [#else]
+                Requires the <a href="https://docs.magnolia-cms.com/dam-focal/">Image Focal module</a>: https://docs.magnolia-cms.com/dam-focal/.
+            [/#if]
+          [/#if]
+        [/#if]
+      [/#if]
+    [/#if]
+  [/#if]
+
+  [#assign isHideTeaserDesc = content.hideDescription!false/]
+  <div class="card-body">
+    <h5 class="card-title">${content.heading!pageContent.navTitle}</h5>
+    [#if !content.body?has_content && isHideTeaserDesc == false]
+      [#if pageContent.teaserDescription?has_content]
+      <div class="card-text">${cmsfn.decode(pageContent).teaserDescription}</div>
+      [/#if]
+    [#else]
+    <div class="card-text">${cmsfn.decode(content).body}</div>
+    [/#if]
+    <a class="btn btn-primary" role="button" href="${href}">${content.btnText!'Find out more'}</a>
+  </div>
+
+</div>
+----
+
+--
+Template YAML::
++
+--
+*Teaser*
+
+Template ID: `btk:components/teaser/teaser`
+[source,yaml]
+----
+title: Teaser
+renderType: freemarker
+templateScript: /btk/templates/components/teaser/teaser.ftl
+dialog: btk:components/teaser
+----
+--

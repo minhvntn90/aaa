@@ -1,0 +1,76 @@
+= RichText
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Provides ability to create flexible text-based content in the Pages app. It's based on https://docs.magnolia-cms.com/product-docs/6.2/developing/templating/dialog-definition/field-definition/list-of-fields/rich-text-field/[Magnolia Rich Text Field] which is powered by https://ckeditor.com/docs/[CKEditor 4]
+
+This component has the flexibility to customize the styling and css class.
+
+== Features
+. Renders the content from the Text field.
+. Supports rendering images from the DAM.
+. Supports bold, italic, underline, strikethrough.
+. Supports links to DAM assets, internal or external content page.
+. Supports ordered and unordered lists with bullets.
+. Supports rendering of tables
+
+== Usage
+This component can only be added to the Column area of a Row component.
+
+=== Add the RichText
+To add the RichText:
+
+. In a Column area click *Add component*. Select *RichText* then *Next*.
+image:components/richtext/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can fulfill contents, including the Basic Information and the Style
+image:components/richtext/02_EditComponent.png[Edit RichText item]
+image:components/richtext/03_EditComponent.png[Edit Style and Css]
+
+. In preview mode, you can see how the richtext component are displayed on the page.
+image:components/richtext/04_PreviewComponent.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*RichText*
+[source,yaml]
+----
+title: Rich Text
+renderType: freemarker
+templateScript: /btk/templates/components/text/text.ftl
+dialog: btk:components/text
+----
+
+--
+Template FTL::
++
+--
+*RichText*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#include "/btk/includes/templates/css.ftl"]
+
+[#if content.text?has_content]
+  <div class="${utils.getClassName()}" style="${cmsfn.decode(content).css!""}">${cmsfn.decode(content).text}</div>
+[/#if]
+----
+
+--
+Template YAML::
++
+--
+*RichText*
+
+Template ID: `btk:components/text/text`
+[source,yaml]
+----
+title: Rich Text
+renderType: freemarker
+templateScript: /btk/templates/components/text/text.ftl
+dialog: btk:components/text
+----
+--

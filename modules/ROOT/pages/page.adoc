@@ -1,0 +1,528 @@
+= Page Structure
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Magnolia Prototype you to define pages areas , that contains navigation, main, footer, header scripts, body begin script and body end scripts areas.
+
+We provide a setting for including inheritance component for all page:
+- Content Author can be added Meta data, SEO properties on content Page Properties 
+- Content Page can be added as a child of Home or another Content Page
+- Content Author can insert Link List into footer area
+- Content Author can insert Footer Disclaimer and copyright into footer area
+- Footer contains back to top link
+- How does robots.txt work?
+  ** Search engines have two main jobs:
+
+  Crawling the web to discover content;
+  Indexing that content so that it can be served up to searchers who are looking for information.
+  To crawl sites, search engines follow links to get from one site to another — ultimately, crawling across many billions of links and websites. This crawling behavior is sometimes known as “spidering.”
+
+  After arriving at a website but before spidering it, the search crawler will look for a robots.txt file. If it finds one, the crawler will read that file first before continuing through the page. Because the robots.txt file contains information about how the search engine should crawl, the information found there will instruct further crawler action on this particular site. If the robots.txt file does not contain any directives that disallow a user-agent’s activity (or if the site doesn’t have a robots.txt file), it will proceed to crawl other information on the site.
+
+== Usage
+. In a Page Area click *Edit page properties*.
+image:theme/page/01_editpage.png[Edit page properties]
+** There are meta fields can be modified in dialog . 
+image:theme/page/02_metafields.png[Edit page properties]
+** Preview the rendering meta field by view source the webpage.
+image:theme/page/03_previewMeta.png
+
+** Robots rendered by configuration of the checkBoxField
+image:theme/page/robots/01_page-dialog.png
+** Preview the rendering robots render meta by view source the webpage.
+image:theme/page/robots/3_previewRobots.png
+
+- Edit Robots file
+. This robots file can be editable via magnolia admin central.
+image:theme/page/robots/1_menu.png
+
+. Go to the folder, where the robots file is saved.
+image:theme/page/robots/2_folder.png
+
+. Click to edit "robots.txt" , edit the content of the file and save.
+image:theme/page/robots/3_edit.png
+
+
+== Code
+[tabs]
+====
+Page Properties::
++
+--
+label: Page
+width: medium
+form:
+  name: Page
+  properties:
+  - name: pageTitle
+    label: Page title
+    $type: textField
+  - name: navTitle
+    label: Navigation title
+    $type: textField
+  - name: windowTitle
+    label: Window title
+    $type: textField
+  - name: abstract
+    label: Abstract
+    $type: textField
+    rows: 2
+  - name: hideInNav
+    label: Navigation
+    type: java.lang.Boolean
+    $type: checkBoxField
+    buttonLabel: Do not show in navigation
+  - name: hideNavigation
+    label: Hide Navigation Bar
+    type: java.lang.Boolean
+    $type: checkBoxField
+    buttonLabel: Do not show navigation menu
+  - name: headline
+    $type: textField
+    label: Headline 1 (h1)
+    i18n: true
+  - name: metaDescription
+    $type: textField
+    label: "Meta description"
+    maxLength: 160
+    rows: 3
+    i18n: true
+  - name: ogDescription
+    $type: textField
+    label: "Og description"
+    rows: 3
+    i18n: true
+  - name: metaKeywords
+    $type: textField
+    label: "Meta keywords"
+    i18n: true
+  - name: static
+    label: Description
+    $type: staticField
+    value: Keep the description length between 50 - 160 characters.
+  - name: ogImage
+    label: Og image
+    $type: damLinkField
+    i18n: true
+  - name: noIndexPage
+    $type: checkBoxField
+    label: "Block search indexing"
+    buttonLabel: "Hide the page and subpages (robots: noindex, nofollow)"
+  - name: canonicalLink
+    $type: switchableField
+    label: Canonical link
+    field:
+      $type: radioButtonGroupField
+      layout: horizontal
+      defaultValue: currentPage
+      datasource:
+        $type: optionListDatasource
+        options:
+          - name: currentPage
+            value: currentPage
+            label: Current page
+          - name: internal
+            value: internal
+            label: Internal
+          - name: external
+            value: external
+            label: External
+    itemProvider:
+      $type: jcrChildNodeProvider
+    forms:
+      - name: none
+        properties:
+          none:
+            $type: staticField
+            label: "No link"
+            value: ""
+      - name: internal
+        properties:
+          internal:
+            $type: pageLinkField
+            label: Internal
+      - name: external
+        properties:
+          external:
+            $type: textField
+            label: Url
+            description: Enter url including "https://"
+      - name: partners
+        properties:
+          partners:
+            $type: linkField
+            label: Partner
+            buttonSelectNewLabel: Select partner
+            buttonSelectOtherLabel: Select another
+            datasource:
+              $type: jcrDatasource
+              workspace: partners
+      - name: news
+        properties:
+          news:
+            $type: linkField
+            label: News
+            buttonSelectNewLabel: Select news
+            buttonSelectOtherLabel: Select another
+            datasource:
+              $type: jcrDatasource
+              workspace: news
+  - name: teaserHeadline
+    $type: textField
+    label: "Teaser title"
+    i18n: true
+  - name: teaserLink
+    $type: textField
+    label: "Teaser Link"
+    i18n: true
+  - name: teaserLinkLabel
+    $type: textField
+    label: "Teaser link label"
+    i18n: true
+  - name: teaserImage
+    label: Select image
+    $type: damLinkField
+    i18n: true
+  - name: teaserDescription
+    $type: richTextField
+    tables: false
+    height: 200
+    label: "Description"
+    i18n: true
+  - !include:/btk/includes/dialogs/image.yaml
+    name: logo
+    label: Nav Logo
+  - name: isAutoGenerated
+    $type: switchableField
+    label: Menu Generation
+    itemProvider:
+      $type: currentItemProvider
+      createIfMissing: true
+    field:
+      name: isAutoGenerated
+      defaultValue: internal
+      $type: radioButtonGroupField
+      datasource:
+        sortable: true
+        $type: optionListDatasource
+        options:
+          - value: auto
+            name: auto
+            label: Auto Generated
+          - value: navigationApp
+            name: navigationApp
+            label: Use Navigation Content App
+    forms:
+      - name: navigationApp
+        properties:
+          - name: navItems
+            label: Primary Nav Root
+            $type: linkField
+            datasource:
+              $type: jcrDatasource
+              workspace: nav
+  - name: navStyle
+    label: Nav Styling
+    defaultValue: 'light'
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: light
+          name: light
+          label: Light
+          selected: true
+        - value: blue
+          name: blue
+          label: Primary
+        - value: dark
+          name: dark
+          label: Dark
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: pageTitle
+          - name: navTitle
+          - name: windowTitle
+          - name: abstract
+          - name: noIndexPage
+          - name: hideInNav
+          - name: hideNavigation
+      secondTab:
+        label: Meta Data
+        fields:
+          - name: headline
+          - name: canonicalLink
+          - name: metaKeywords
+          - name: metaDescription
+          - name: static
+          - name: ogDescription
+          - name: ogImage
+      thirdTab:
+        label: "Teaser Data"
+        fields:
+          - name: teaserHeadline
+          - name: teaserDescription
+          - name: teaserLinkLabel
+          - name: teaserLink
+          - name: teaserImage
+      fourthTab:
+        label: "Navigation"
+        fields:
+          - name: logo
+          - name: isAutoGenerated
+          - name: navStyle
+
+----
+--
+Template FTL::
++
+--
+<!doctype html>
+<html lang="${cmsfn.language()}" data-bs-theme="auto">
+  <head>
+    [@cms.init /]
+    [#assign site = sitefn.site()!]
+    [#assign theme = sitefn.theme(site)!]
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+    [#list theme.cssFiles as cssFile]
+      <link rel="stylesheet" href="${cssFile.link}" media="${cssFile.media}"/>
+    [/#list]
+
+    [#include "/btk/includes/templates/headerTags.ftl"]
+
+    <style>
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+
+      .bd-mode-toggle {
+        z-index: 1500;
+      }
+
+      .bd-mode-toggle .dropdown-menu .active .bi {
+        display: block !important;
+      }
+    </style>
+  </head>
+  <body class="pt-5 mt-5">
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="check2" viewBox="0 0 16 16">
+        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+      </symbol>
+      <symbol id="circle-half" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+      </symbol>
+      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+      </symbol>
+      <symbol id="sun-fill" viewBox="0 0 16 16">
+        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+      </symbol>
+    </svg>
+    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+      <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
+              id="bd-theme"
+              type="button"
+              aria-expanded="false"
+              data-bs-toggle="dropdown"
+              aria-label="Toggle theme (auto)">
+        <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
+          <use href="#circle-half"></use>
+        </svg>
+        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
+                  aria-pressed="false">
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#sun-fill"></use>
+            </svg>
+            Light
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+                  aria-pressed="false">
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#moon-stars-fill"></use>
+            </svg>
+            Dark
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
+                  aria-pressed="true">
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#circle-half"></use>
+            </svg>
+            Auto
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    [@cms.area name="nav" /]
+    [@cms.area name="breadcrumb" /]
+    
+    [@cms.area name="header" /]
+
+    <div class="container">
+      [@cms.area name="main" /]
+
+      <hr />
+      <footer>
+        [@cms.area name="footer" /]
+      </footer>
+    </div>
+
+    [#list theme.jsFiles as jsFile]
+      <script src="${jsFile.link}"></script>
+    [/#list]
+  </body>
+</html>
+----
+--
+Template YAML::
++
+--
+*Page Defination*
+
+Template ID: `btk:page/prototype`
+[source,yaml]
+----
+renderType: site
+templateScript: /btk/templates/pages/prototype.ftl
+class: info.magnolia.module.site.templates.PrototypeTemplateDefinition
+visible: false
+type: prototype
+
+areas:
+  nav: !include:/btk/includes/areas/nav.yaml
+  breadcrumb: !include:/btk/includes/areas/breadcrumb.yaml
+  header:
+    availableComponents:
+      jumbotron:
+        id: btk:components/jumbotron/jumbotron
+      carousel:
+        id: btk:components/carousel/carousel
+  main:
+    availableComponents:
+      row:
+        id: btk:components/row/row
+  footer:
+    templateScript: /btk/includes/templates/backTop.ftl
+    availableComponents:
+      row:
+        id: btk:components/row/row
+
+----
+--
+*Page*
+[source,yaml]
+----
+title: MCL Page
+renderType: site
+dialog: btk:pages/home
+areas:
+  footer: !include:/btk/includes/areas/footer.yaml
+
+----
+--
+Template FTL::
++
+--
+*headerTags SEO*
+[source,ftl]
+----
+[#compress]
+    [#include "/btk/includes/templates/functions.ftl"]
+
+    [#-- Populate the data --]
+    [#assign tags = {}]
+    [#assign tags = tags + { "metaDescription": getPageDescription(content) }]
+    [#assign tags = tags + { "metaKeywords": getPageKeywords(content) }]
+    [#assign tags = tags + { "ogDescription": content.ogDescription! }]
+    [#assign tags = tags + { "title": getPageTitle(content) }]
+
+    [#if content.ogImage?has_content && damfn.getAssetLink(content.ogImage)?has_content]
+        [#assign tags = tags + { "ogImage": content.ogImage }]
+    [/#if]
+
+    [#-- Render the meta tags --]
+    <meta property="og:url" content="${state.originalBrowserURL}" />
+    <meta property="og:type" content="website">
+    [#if tags.title?has_content]
+      <meta property="og:title" content="${tags.title}" />
+    [/#if]
+    [#if tags.ogDescription?has_content]
+      <meta property="og:description" content="${tags.ogDescription}" />
+    [/#if]
+    [#if tags.ogImage?has_content]
+      <meta property="og:image" content="${getBaseUrl() + damfn.getAssetLink(tags.ogImage, '1200x628')!}">
+    [/#if]
+
+    [#if tags.title?has_content]
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:site" content="@magnolia_cms">
+      <meta name="twitter:title" content="${tags.title}">
+
+        [#if tags.ogDescription?has_content]
+          <meta name="twitter:description" content="${tags.ogDescription}">
+        [/#if]
+
+        [#if tags.ogImage?has_content]
+          <meta name="twitter:image" content="${getBaseUrl() + damfn.getAssetLink(tags.ogImage, '1024x512')!}">
+        [/#if]
+    [/#if]
+
+    [#if tags.title?has_content]
+      <title>${content.windowTitle!content.pageTitle!content.@name}</title>
+    [/#if]
+
+    [#if tags.metaDescription?has_content]
+        <meta content="${tags.metaDescription}" name="description">
+    [/#if]
+    [#if tags.metaKeywords?has_content]
+        <meta content="${tags.metaKeywords!}" name="keywords">
+    [/#if]
+
+    [#-- Canonical link --]
+    [#include "/btk/includes/templates/canonicalLink.ftl"]
+[/#compress]
+----
+--

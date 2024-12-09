@@ -1,0 +1,13 @@
+:!example-caption:
+= {page-component-title}
+:keywords: module, accelerator, toolkit
+:repo-folder: btk
+
+// overview
+include::btk:ROOT:partial$c_module-overview.adoc[tag=noTitle]
+
+// installation module
+include::btk:ROOT:partial$r_module-installation.adoc[]
+
+// related topics
+include::btk:ROOT:partial$snippets/s_related-topics.adoc[]

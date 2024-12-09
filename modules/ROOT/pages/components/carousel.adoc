@@ -1,0 +1,335 @@
+= Carousel
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+The Carousel component is a versatile tool for showcasing content in a visually engaging manner. It allows users to create dynamic slideshows with various combinations of media and text, providing a rich and interactive experience for website visitors.
+
+== Features
+
+- **Automatic Scrolling:** Carousel slides scroll automatically with a pre-determined delay, ensuring a smooth and continuous viewing experience.
+
+- **Flexible Slide Content:** Each Carousel slide can display a combination of headline, text, and button, with or without background images or videos.
+
+- **Slide Justification:** Users can justify the content of each slide to the left, right, or center, providing flexibility in design layout.
+
+- **Navigation Controls:** Users can navigate through the slides using arrow previous/next controls, facilitating easy interaction with the Carousel.
+
+- **Indicator Controls:** Indicator controls at the bottom allow users to select or jump to a desired slide, enhancing navigation efficiency.
+
+- **Play/Pause Functionality:** Users can pause and resume scrolling using Play/Pause button controls, giving them control over the slideshow playback.
+
+- **Hero Banner Mode:** If only one slide is present, all controls are hidden, transforming the Carousel into a Hero Banner component.
+
+- **Configurable Settings:** Users can configure various aspects of the Carousel, including the number of slides, visibility of controls, auto-scroll behavior, and delay.
+
+- **Dialog-based Configuration:** Configuration settings such as headline, text, button style, button link, and media content can be easily entered via the dialog.
+
+- **Customization:** CSS and class overrides are supported, allowing users to customize the Carousel's appearance and behavior according to their design requirements.
+
+- **Accessibility:** A "skip to content" link is provided, enabling users to bypass the Carousel if they prefer not to interact with it.
+
+== Usage
+- **Page Template Integration:** The Carousel component can be added to any page template, specifically in the Header area, providing flexibility in placement.
+
+- **Up to 5 Carousel Slides:** The Carousel supports up to 5 slides, allowing users to create engaging presentations with multiple pieces of content.
+
+=== Add Carousel container
+To add the Carousel container:
+
+. In a **Header component** click *Add component*. Select *Carousel* then *Next*.
+image:components/carousel/Add-component.png[Add component dialog]
+
+. The Carousel properties form will be shown with the relevant configuration options.
+image:components/carousel/Configuration.png[Configure the settings of the Carousel]
+
+=== Add Carousel slides
+. With the *Carousel Slides* area selected on the Page, click *Add component*. In this dialog click *Next*.
+image:components/carousel/Add-slide.png[Add Carousel slide]
+
+. In the **Carousel slide** edit dialog you can enter the content for this Carousel slide.
+image:components/carousel/Edit-slide-1.png[Edit Carousel slide]
+image:components/carousel/Edit-slide-2.png[Edit Carousel slide]
+image:components/carousel/Edit-slide-3.png[Edit Carousel slide]
+image:components/carousel/Edit-slide-4.png[Edit Carousel slide]
+
+. Continue adding more Carousel slide until you have enough content.
+
+. In preview mode, you can see how the Carousel is displayed on the page.
+image:components/carousel/Preview.png[Using WYSIWYG preview]
+
+== Configuration
+The following configuration parameters are supported with this component.
+
+[cols="3,2,5a"]
+|===
+|Parameter | Default value | Description
+
+| `maxComponents` | 5 | The maximum number of supported Carousel Slides in an Carousel container.
+
+| Show indicators | False | Show indicators in the carousel when checked; otherwise, hide the indicators.
+
+| Show prev/next | False | Show previous/next controls in the carousel when checked; otherwise, hide the previous/next controls.
+
+| Show play/pause | False | Show play/pause buttons in the carousel when checked; otherwise, hide the play/pause buttons.
+
+| Allow auto-scroll | False | Allow auto-scroll in the carousel when checked; otherwise, disallow the auto-scroll.
+
+| Interval (ms) | 5000 | The amount of time to delay between automatically cycling to the next item.
+
+
+|===
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Carousel*
+[source,yaml]
+----
+label: Carousel
+width: medium
+form:
+  name: Carousel
+  properties:
+    - name: showIndicators
+      label: Show indicators
+      type: java.lang.Boolean
+      $type: checkBoxField
+      buttonLabel: Show indicators in the carousel when checked; otherwise, hide the indicators.
+    - name: showPrevNext
+      label: Show prev/next
+      type: java.lang.Boolean
+      $type: checkBoxField
+      buttonLabel: Show previous/next controls in the carousel when checked; otherwise, hide the previous/next controls.
+    - name: showPlayPause
+      label: Show play/pause
+      type: java.lang.Boolean
+      $type: checkBoxField
+      buttonLabel: Show play/pause buttons in the carousel when checked; otherwise, hide the play/pause buttons.
+    - name: autoScroll
+      label: Allow auto-scroll
+      type: java.lang.Boolean
+      $type: checkBoxField
+      buttonLabel: Allow auto-scroll in the carousel when checked; otherwise, disallow the auto-scroll.
+    - name: interval
+      label: Interval (ms)
+      $type: textField
+      description: The amount of time to delay between automatically cycling to the next item.
+    - !include:/btk/includes/dialogs/class.yaml
+    - !include:/btk/includes/dialogs/css.yaml
+----
+*Carousel Slide*
+[source,yaml]
+----
+label: Carousel Slide
+width: medium
+form:
+  name: Item
+  properties:
+  - !include:/btk/includes/dialogs/heading.yaml
+    required: true
+  - !include:/btk/includes/dialogs/body.yaml
+  - !include:/btk/includes/dialogs/btnText.yaml
+  - !include:/btk/includes/dialogs/btnVariant.yaml
+  - !include:/btk/includes/dialogs/btnOutline.yaml
+  - !include:/btk/includes/dialogs/btnSize.yaml
+  - !include:/btk/includes/dialogs/link.yaml
+  - !include:/btk/includes/dialogs/image.yaml
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+  - name: elementsJustification
+    label: Elements justification
+    defaultValue: center
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: center
+          name: center
+          label: Center
+          selected: true
+        - value: left
+          name: left
+          label: Left
+        - value: right
+          name: right
+          label: Right
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: heading
+          - name: body
+      secondTab:
+        label: Button
+        fields:
+          - name: btnText
+          - name: btnVariant
+          - name: btnOutline
+          - name: btnSize
+          - name: link
+      thirdTab:
+        label: Image/Video
+        fields:
+          - name: image
+      styleTab:
+        label: Style
+        fields:
+          - name: elementsJustification
+          - name: class
+          - name: css
+----
+--
+Template FTL::
++
+--
+*Carousel*
+
+Template Script: `templates/components/carousel/carousel.ftl`
+[source,ftl]
+----
+[@cms.area name="items" contextAttributes={"content": content!} /]
+----
+
+*Carousel Area*
+
+Template Script: `templates/areas/carousel-items.ftl`
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+
+[#if components?has_content]
+  [#assign total = components?size]
+  [#assign parentId = 'carousel-${content.@id}']
+  [#assign carouselNode = cmsfn.parent(content, 'mgnl:component')]
+  <div data-bs-pause="false" data-bs-touch="true" id="${parentId}" class="carousel slide ${ctx.content.class!""}" style="${cmsfn.decode(ctx.content).css!""}" role="region" aria-label="Carousel" aria-roledescription="carousel" aria-hidden="true" tabindex="-1"
+        [#if carouselNode.autoScroll?has_content && carouselNode.autoScroll]
+          data-bs-ride="carousel"
+          [#if carouselNode.interval?has_content && carouselNode.interval?is_number]
+            data-bs-interval="${carouselNode.interval!'5000'}"
+          [/#if]
+        [/#if]
+
+  >
+    <button data-bs-parent-id="${parentId}" type="button" class="btn btn-link btn-skip-to-content" style="position:absolute; top:6.5rem;z-index: 10">
+      <i class="bi bi-skip-forward"></i> Skip to content
+    </button>
+    [#if total > 1 && (carouselNode.showIndicators?has_content && carouselNode.showIndicators)]
+    <div class="carousel-indicators" role="tablist" aria-label="Slides indicators">
+      [#list 0..total-1 as i]
+        <button type="button" data-bs-target="#${parentId}" data-bs-slide-to="${i}" class="${(i == 0)?then('active', '')}" aria-current="${(i == 0)?then('true', '')}" aria-label="Slide ${i+1}" role="tab" tabindex="${i}"></button>
+      [/#list]
+    </div>
+    [/#if]
+    <div class="carousel-inner">
+      [#list components as component]
+        [@cms.component content=component contextAttributes={"index": component_index} /]
+      [/#list]
+    </div>
+    [#if total > 1 && (carouselNode.showPrevNext?has_content && carouselNode.showPrevNext)]
+    <button class="carousel-control-prev" type="button" data-bs-target="#${parentId}" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#${parentId}" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+    [/#if]
+    [#if total > 1 && (carouselNode.showPlayPause?has_content && carouselNode.showPlayPause)]
+      <div class="pause-cycle-buttons" style="position:absolute; bottom:6.5rem;z-index: 10">
+        <button type="button" class="btn btn-outline-info btn-carousel-play-pause btn-cycle disabled" data-bs-parent-id="${parentId!}">
+          <i class="bi-play"></i>
+        </button>
+        <button type="button" class="btn btn-outline-info btn-carousel-play-pause btn-pause" data-bs-parent-id="${parentId!}">
+          <i class="bi-pause"></i>
+        </button>
+      </div>
+    [/#if]
+  </div>
+[#elseif cmsfn.isEditMode()]
+  This carousel is empty
+[/#if]
+----
+
+*Carousel Slide*
+
+Template Script: `templates/components/carousel/carousel-slide.ftl`
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+
+[#if content.heading?has_content]
+  [#assign class = 'carousel-item']
+
+  [#if ctx.index == 0]
+    [#assign class += ' active']
+  [/#if]
+  <div class="${class} ${utils.getClassName(content.class!'')}" style="${cmsfn.decode(content).css!""}" role="tabpanel" aria-roledescription="Slide" aria-labelledby="carousel-item-${ctx.index!}__heading" [#if ctx.index > 0]aria-hidden="true"[/#if]>
+    [#if content.image?has_content]
+      [#assign src = damfn.getAssetLink(content.image)]
+
+      [#if src?has_content]
+        [#assign asset = damfn.getAsset(content.image)]
+        [#assign assetMap = damfn.getAssetMap(asset)]
+        [#assign alt = assetMap.title!assetMap.name!assetMap.@name]
+
+        <img src="${src}" alt="${alt}">
+      [/#if]
+    [/#if]
+    <div class="carousel-caption d-none d-md-block text-aline-${content.elementsJustification!"center"}">
+      [#if content.heading?has_content]
+        <h5>${content.heading!}</h5>
+      [/#if]
+      [#if content.body?has_content]
+        <p>${cmsfn.decode(content).body!}</p>
+      [/#if]
+      [#if content.btnText?has_content]
+        [#include "/btk/includes/templates/href.ftl"]
+        <a role="button"
+           class="${utils.getClassName('btn btn-${content.btnVariant!"none"} btn-outline-${content.btnOutline!"none"} btn-${content.btnSize!"none"}')}"
+           href="${href!}">${content.btnText!}</a>
+      [/#if]
+    </div>
+  </div>
+[/#if]
+----
+--
+Template YAML::
++
+--
+*Carousel*
+
+Template ID: `btk:components/carousel/carousel`
+[source,yaml]
+----
+title: Carousel
+renderType: freemarker
+templateScript: /btk/templates/components/carousel/carousel.ftl
+dialog: btk:components/carousel/carousel
+areas:
+  items:
+    title: Carousel Slides
+    templateScript: /btk/templates/areas/carousel-items.ftl
+    maxComponents: 5
+    availableComponents:
+      carousel-slide:
+        id: btk:components/carousel/carousel-slide
+
+----
+
+*Carousel Slide*
+
+Template ID: `btk:components/carousel/carousel-slide`
+[source,yaml]
+----
+title: Carousel Slide
+renderType: freemarker
+templateScript: /btk/templates/components/carousel/carousel-slide.ftl
+dialog: btk:components/carousel/carousel-slide
+
+----
+--

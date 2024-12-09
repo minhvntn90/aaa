@@ -1,0 +1,400 @@
+= Upload
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+This component allows users to upload files and assets to Magnolia's DAM.
+
+== Features
+* Upload
+. Supports all OOTB Bootstrap style variants, including: Primary, Secondary, Success, Danger, Warning, Info, Light, Dark and Link.
+. Supports OOTB Boostrap outline styling
+. Supports OOTB Boostrap Toggle states
+. Supports OOTB Boostrap Button tags
+. Supports Large, Small styling, custom Class and CSS styles
+. Shows an animation when the button is depressed
+. Shows configurable title and caption
+. Shows filename and file size from the uploaded file
+. Button text changes to "Uploading..." and is disabled while the file is being uploaded
+. Button text changes to "Uploaded" after the file has uploaded successfully
+. Button text changes to "Upload failed" if the file upload has failed
+. Shows an SVG icon corresponding to relevant uploaded file/mime type, including: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPEG, PNG, webm, webp, mp4 with alt text reflecting the file type
+. Class and CSS can be overridden in the CMS
+. Supports uploading PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPEG, PNG, webm, webp, mp4 files
+. Displays the filetype, filename and icon based on the MIME type.
+
+== Usage
+Upload Component can be added to any page template in Column area of a Row component only.
+
+== Note
+Before add component Upload we need to create specify folder in the DAM workspace
+
+. In the DAM workspace create PublicAssets folder, only PublicAssets folder have the permission to upload
+image:components/upload/00_CreateFolder.png[Create Folder]
+
+=== Add Row
+To add the Row:
+
+. In an Actions area click *Add component*. Select *Upload* then *Next*.
+image:components/upload/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can config the title, caption, button label, RestAPI URL, Folder upload
+image:components/upload/02_EditComponent.png[Edit Upload]
+
+image:components/upload/02.1_EditComponent.png[Edit Upload]
+
+. add the Class, Slyte for button 
+image:components/upload/03_EditComponent.png[Edit Upload]
+
+. In the dialog you can modify background color, text color for file name, type file
+image:components/upload/04_EditComponent.png[Edit Upload]
+
+. In preview mode, you can see how the Upload are displayed on the page.
+image:components/upload/05_PreviewComponent.png[Using WYSIWYG preview]
+
+image:components/upload/05.1_PreviewComponent.png[Using WYSIWYG preview]
+
+image:components/upload/05.2_PreviewComponent.png[Using WYSIWYG preview]
+
+. Set anonymous permission, Click Security icon
+image:components/upload/06_UserPermission.png[Add Permission]
+
+. In Roles tab, we will set for the rest-anonymous
+image:components/upload/06.1_UserPermission.png[Add Permission]
+
+. Then in Web access tab, add new item GET & POST /.rest/nodes/v1/dam/PublicAssets/* 
+image:components/upload/06.2_UserPermission.png[Add Permission]
+
+. We can create a new user roles for this
+image:components/upload/06.3_UserPermission.png[Add Roles]
+
+image:components/upload/06.4_UserPermission.png[Add Roles]
+
+image:components/upload/06.5_UserPermission.png[Add Roles]
+
+. Add /.rest/nodes/v1/dam/PublicAssets/* because we need to stores data in the dam JCR workspace. Example: http://localhost:8080/magnoliaAuthor/.rest/nodes/v1/dam
+image:components/upload/07_AssetWithREST.png[Asset With REST]
+
+. Please refer the documentation for more details:
+  - Configuration permission role for user: https://docs.magnolia-cms.com/product-docs/6.2/administration/security/default-roles-groups-and-users/
+  - How to add an asset with REST: https://docs.magnolia-cms.com/product-docs/6.2/developing/development-how-tos/how-to-add-an-asset-with-rest/
+
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Upload*
+[source,yaml]
+----
+label: Upload
+width: medium
+form:
+  name: Button
+  properties:
+  - name: variant
+    label: Variant
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: primary
+          name: 0
+          label: Primary
+        - value: secondary
+          name: 1
+          label: Secondary
+        - value: success
+          name: 2
+          label: Success
+        - value: danger
+          name: 3
+          label: Danger
+        - value: warning
+          name: 4
+          label: Warning
+        - value: info
+          name: 5
+          label: Info
+        - value: light
+          name: 6
+          label: Light
+        - value: dark
+          name: 7
+          label: Dark
+        - value: link
+          name: 8
+          label: Link
+  - name: outline
+    label: Outline buttons
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: primary
+          name: 0
+          label: Primary
+        - value: secondary
+          name: 1
+          label: Secondary
+        - value: success
+          name: 2
+          label: Success
+        - value: danger
+          name: 3
+          label: Danger
+        - value: warning
+          name: 4
+          label: Warning
+        - value: info
+          name: 5
+          label: Info
+        - value: light
+          name: 6
+          label: Light
+        - value: dark
+          name: 7
+          label: Dark
+  - name: size
+    label: Size
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: lg
+          name: 0
+          label: Large
+        - value: sm
+          name: 1
+          label: Small
+ 
+
+  - !include:/btk/includes/dialogs/text.yaml
+    label: Title
+    defaultValue: File Upload
+  - !include:/btk/includes/dialogs/body.yaml
+    label: Caption
+    height: 250 
+    defaultValue: Upload a file from your computer
+  - !include:/btk/includes/dialogs/btnText.yaml
+
+  - name: folderUpload
+    label: Folder Upload
+    $type: linkField
+    converterClass: info.magnolia.ui.editor.converter.JcrNodeToPathConverter
+    required: true
+    defaultValue: /PublicAssets
+    datasource:
+      $type: jcrDatasource
+      workspace: dam
+      rootPath: /PublicAssets
+
+
+  - name: btnLoading
+    label: Button Loading text
+    $type: textField
+  - name: btnLoaded
+    label: Button Loaded text
+    $type: textField
+  - name: btnLoadFailed
+    label: Button Loaded Fail text
+    $type: textField
+  - name: isHideInfo
+    label: Hide File Type
+    $type: checkBoxField
+    buttonLabel: Select this option
+
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+
+  - name: infoBg
+    label: Background Filename
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: primary
+          name: 0
+          label: Primary
+        - value: secondary
+          name: 1
+          label: Secondary
+        - value: success
+          name: 2
+          label: Success
+        - value: danger
+          name: 3
+          label: Danger
+        - value: warning
+          name: 4
+          label: Warning
+        - value: info
+          name: 5
+          label: Info
+        - value: light
+          name: 6
+          label: Light
+        - value: dark
+          name: 7
+          label: Dark
+        - value: link
+          name: 8
+          label: Link
+
+  - name: infoColor
+    label: Color Filename
+    defaultValue: none
+    $type: comboBoxField
+    datasource:
+      $type: optionListDatasource
+      options:
+        - value: none
+          name: -1
+          label: None
+          selected: true
+        - value: primary
+          name: 0
+          label: Primary
+        - value: secondary
+          name: 1
+          label: Secondary
+        - value: success
+          name: 2
+          label: Success
+        - value: danger
+          name: 3
+          label: Danger
+        - value: warning
+          name: 4
+          label: Warning
+        - value: info
+          name: 5
+          label: Info
+        - value: light
+          name: 6
+          label: Light
+        - value: dark
+          name: 7
+          label: Dark
+        - value: body
+          name: 8
+          label: Body
+        - value: white
+          name: 9
+          label: White
+        - value: black-50
+          name: 10
+          label: Black 50
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: text
+          - name: body
+          - name: folderUpload
+          - name: btnText
+          - name: btnLoading
+          - name: btnLoaded
+          - name: btnLoadFailed
+          - name: isHideInfo
+      secondTab:
+        label: Style
+        fields:
+          - name: variant
+          - name: outline
+          - name: size
+          - name: class
+          - name: css
+      thirdTab:
+        label: File Info Style
+        fields:
+          - name: infoBg
+          - name: infoColor
+----
+--
+Template FTL::
++
+--
+*Upload*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+
+<div class="mt-5" data-upload-file data-context-path="${ctx.contextPath!}" data-folder="${content.folderUpload!}">
+  [#if content.text?has_content]
+  <h1>${content.text!"File Upload"}</h1>
+  [/#if]
+  <div class="mb-3">
+    [#if content.body?has_content]
+    <label for="fileInput-${content.@uuid!}" class="form-label">${cmsfn.decode(content).body!"Upload a file from your computer"}</label>
+    [/#if]
+    <div data-alert></div>
+    <div class="input-group">
+      <input type="file" class="form-control" id="fileInput-${content.@uuid!}" name="fileInput-${content.@uuid!}" tabindex="0" data-input-file>
+    </div>
+    [#assign isHideInfo = content.isHideInfo!false /]
+
+    [#if !isHideInfo]
+      <style>
+        .btk-upload__icon::before { font-size: 24px; }
+      </style>
+      <div data-info-style="${utils.getClassName('p-2 m-1 rounded bg-${content.infoBg!"none"} text-${content.infoColor!"none"}')}"></div>
+    [/#if]
+  </div>
+
+  <button type="button" 
+      class="${utils.getClassName('disabled btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')}"
+      style="${cmsfn.decode(content).css!""}"
+      aria-pressed="false"
+      aria-label="Upload"
+      aria-disabled="true"
+      data-bs-toggle="button"
+      tabindex="0"
+      data-btn-click
+      data-btn-text="${content.btnText!'Upload'}"
+      data-btn-loading="${content.btnLoading!'Uploading...'}"
+      data-btn-loaded="${content.btnLoaded!'Uploaded'}"
+      data-btn-load-fail="${content.btnLoadFailed!'Upload failed'}"
+  >${content.btnText!'Upload'}
+  </button>
+</div>
+----
+--
+Template YAML::
++
+--
+*Upload*
+
+Template ID: `btk:components/upload/upload`
+[source,yaml]
+----
+title: Upload
+renderType: freemarker
+templateScript: /btk/templates/components/upload/upload.ftl
+dialog: btk:components/upload
+
+----
+--

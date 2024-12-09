@@ -1,0 +1,13 @@
+site:
+  title: "Local Docs Site"
+  start_page: "modules/ROOT/pages/index.adoc"
+
+content:
+  sources:
+    - url: file:///I:/anora-test/docs-site
+      start_path: modules/ROOT/pages
+     
+
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable

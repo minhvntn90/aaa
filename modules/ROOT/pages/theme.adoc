@@ -1,0 +1,354 @@
+= Theme
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Magnolia Themes you to create pages with a set of templates, stylesheets, images and other assets. The Magnolia Components Theme includes Bootstrap library by default.
+
+We provide two themes:
+
+* Magnolia Components Default Theme
+* Magnolia Components Accessible Theme: uses the `prefers-reduced-motion` media query to reduce or disable animations and increase the accessibility of your website.
+
+== Features
+* Supports all OOTB Boostrap features
+* Supports the light and dark mode toggle control
+* Supports Image variations(resize/crops):
+** `xs: 100px`
+** `sm: 576px`
+** `md: 768px`
+** `lg: 992px`
+** `xl: 1200px`
+** `xxl: 1400px`
+** `max-xs: 575px`
+** `max-sm: 767px`
+** `max-md: 991px`
+** `max-lg: 1199px`
+** `max-xl: 1399px`
+** 240x180
+** 320x240
+** 480x360
+** 960x720
+** 1366x1024
+** 1600x1200
+
+== Code
+[tabs]
+====
+Magnolia Components Default Theme::
++
+--
+File: /btk/themes/magnolia-components-default-theme.yaml
+[source,yaml]
+----
+cssFiles:
+  bootstrap:
+    addFingerPrint: true
+    link: /.resources/btk/webresources/css/index-default.min.css
+    media: all
+jsFiles:
+  bootstrap:
+    addFingerPrint: true
+    link: /.resources/btk/webresources/js/index.min.js
+  colorModes:
+    addFingerPrint: true
+    link: /.resources/btk/webresources/js/color-modes.js
+imaging:
+  class: info.magnolia.templating.imaging.VariationAwareImagingSupport
+  variations:
+    "xs":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 100
+    "sm":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 576
+    "md":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 768
+    "lg":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 992
+    "xl":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 1200
+    "xxl":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 1400
+    "max-xs":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 575
+    "max-sm":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 767
+    "max-md":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 991
+    "max-lg":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 1199
+    "max-xl":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 1399
+    "1600x1200":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 1200
+      width: 1600
+    "1366x1024":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 1024
+      width: 1366
+    "960x720":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 720
+      width: 960
+    "480x360":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 360
+      width: 480
+    "320x240":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 240
+      width: 320
+    "240x180":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 180
+      width: 240
+----
+--
+Magnolia Components Accessible Theme::
++
+--
+File: /btk/themes/magnolia-components-accessible-theme.yaml
+[source,yaml]
+----
+cssFiles:
+  bootstrap:
+    addFingerPrint: true
+    link: /.resources/btk/webresources/css/index-accessible.min.css
+    media: all
+jsFiles:
+  bootstrap:
+    addFingerPrint: true
+    link: /.resources/btk/webresources/js/index.min.js
+  colorModes:
+    addFingerPrint: true
+    link: /.resources/btk/webresources/js/color-modes.js
+imaging:
+  class: info.magnolia.templating.imaging.VariationAwareImagingSupport
+  variations:
+    "xs":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 100
+    "sm":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 576
+    "md":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 768
+    "lg":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 992
+    "xl":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 1200
+    "xxl":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      width: 1400
+    "max-xs":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 575
+    "max-sm":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 767
+    "max-md":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 991
+    "max-lg":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 1199
+    "max-xl":
+      class: info.magnolia.templating.imaging.variation.ImageOperationProvidingVariation
+      imageOperation:
+        class: info.magnolia.imaging.operations.ImageOperationChain
+        operations:
+          resize:
+            class: info.magnolia.imaging.operations.cropresize.BoundedResize
+            maxWidth: 1399
+    "1600x1200":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 1200
+      width: 1600
+    "1366x1024":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 1024
+      width: 1366
+    "960x720":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 720
+      width: 960
+    "480x360":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 360
+      width: 480
+    "320x240":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 240
+      width: 320
+    "240x180":
+      class: info.magnolia.templating.imaging.variation.SimpleResizeVariation
+      height: 180
+      width: 240
+----
+====
+
+== How to configure/extend themes
+Following the https://docs.magnolia-cms.com/product-docs/6.2/Developing/Templating/Theme.html[documentation] to know how to work with themes.
+
+== Usage
+These themes need to be added to the https://docs.magnolia-cms.com/product-docs/6.2/Developing/Templating/Site-definition.html[site definitions] to apply them to pages.
+
+See the example code below while following the documentation.
+
+=== Site Definitions
+[tabs]
+====
+MCL Default theme::
++
+--
+File /btk/decorations/multisite/config.sites.mcl.yaml
+[source,yaml]
+----
+!include:/btk/includes/multisite/default-site.yaml
+theme:
+  name: magnolia-components-default-theme
+mappings:
+  website:
+    URIPrefix: ''
+    handlePrefix: /mcl
+    repository: website
+----
+--
+MCL Accessible theme::
++
+--
+File /btk/decorations/multisite/config.sites.mcl-accessible.yaml
+[source,yaml]
+----
+!include:/btk/includes/multisite/default-site.yaml
+theme:
+  name: magnolia-components-accessible-theme
+mappings:
+  website:
+    URIPrefix: ''
+    handlePrefix: /mcl-accessible
+    repository: website
+----
+--
+Include default site::
++
+--
+File /btk/includes/multisite/default-site.yaml
+[source,yaml]
+----
+templates:
+  class: info.magnolia.module.site.templates.ReferencingPrototypeTemplateSettings
+  prototypeId: btk:pages/prototype
+  availability:
+    templates:
+      home:
+        id: btk:pages/home
+      page:
+        id: btk:pages/page
+      search:
+        id: btk:pages/search
+    enableAllWithRenderType:
+      freemarker: freemarker
+      spa: spa
+theme:
+  name: magnolia-components-default-theme
+i18n:
+  class: info.magnolia.cms.i18n.DefaultI18nContentSupport
+  enabled: true
+  fallbackLocale: en
+  locales:
+    en:
+      country: ''
+      enabled: true
+      language: en
+    de:
+      country: ''
+      enabled: true
+      language: de
+cors:
+  mcl:
+    uris:
+      rest:
+        patternString: /.rest/*
+    allowedOrigins:
+      all: '*'
+    allowedMethods:
+      get: GET
+    allowedHeaders:
+      accept: Accept
+      content-type: Content-Type
+      origin: Origin
+      x-pingother: X-PINGOTHER
+      x-requested-with: X-Requested-With
+----
+--
+====
+
+=== Use pre-defined site definitions in pages
+To use pre-defined site definitions:
+
+. Create some pages:
+image:theme/01_CreateAMCLPage.png[Create a mcl page] +
+image:theme/02_CreateAMC-AccessiblePage.png[Create a mcl-accessible page] +
+image:theme/03_PagesList.png[Pages list]
+
+. Assign those pages to sites by configuring *mappings* inside the site definitions.
+image:theme/04_AssignMCLSite.png[Assign the mcl page to the site]
+image:theme/05_AssignMCLAccessibleSite.png[Assign the mcl-accessible page to the site]

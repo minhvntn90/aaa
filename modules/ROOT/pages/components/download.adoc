@@ -1,0 +1,248 @@
+= Download
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Allows you to create a download button to select assets from the DAM for download by end-users.
+
+This component has the flexibility to customize the button's styling and label.
+
+== Features
+. Supports all OOTB features of the button component.
+. Shows an SVG icon corresponding to relevant file/mime type, including: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPEG, PNG, WebM, WebP, MP4 with alt text reflecting the file type.
+. Shows animation when download button is depressed.
+. Shows asset title and caption.
+. Shows filename and file size.
+
+== Usage
+This component can only be added to the Column area of a Row component.
+
+=== Add the download button
+To add the download button:
+
+. In a Column area click *Add component*. Select *Download* then *Next*.
+image:components/download/01_AddComponent.png[Add component dialog]
+
+. In the dialog you can enter the content for this download button, including the Basic Information and the Style
+image:components/download/02_EditComponent.png[Edit Download Button item]
+
+. In preview mode, you can see how the download component are displayed on the page.
+image:components/download/03_Preview.png[Using WYSIWYG preview]
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Download*
+[source,yaml]
+----
+label: Download
+width: medium
+form:
+  name: Download
+  properties:
+    - name: title
+      label: Title
+      $type: textField
+      description: Enter a title.
+    - name: caption
+      label: Caption
+      $type: textField
+      description: Enter a caption.
+    - name: damLink
+      $type: damLinkField
+      label: DAM link
+      textInputAllowed: true
+      filteringMode: CONTAINS
+      required: true
+    - name: variant
+      label: Variant
+      defaultValue: none
+      $type: comboBoxField
+      datasource:
+        $type: optionListDatasource
+        options:
+          - value: none
+            name: -1
+            label: None
+            selected: true
+          - value: primary
+            name: 0
+            label: Primary
+          - value: secondary
+            name: 1
+            label: Secondary
+          - value: success
+            name: 2
+            label: Success
+          - value: danger
+            name: 3
+            label: Danger
+          - value: warning
+            name: 4
+            label: Warning
+          - value: info
+            name: 5
+            label: Info
+          - value: light
+            name: 6
+            label: Light
+          - value: dark
+            name: 7
+            label: Dark
+          - value: link
+            name: 8
+            label: Link
+    - name: outline
+      label: Outline buttons
+      defaultValue: none
+      $type: comboBoxField
+      datasource:
+        $type: optionListDatasource
+        options:
+          - value: none
+            name: -1
+            label: None
+            selected: true
+          - value: primary
+            name: 0
+            label: Primary
+          - value: secondary
+            name: 1
+            label: Secondary
+          - value: success
+            name: 2
+            label: Success
+          - value: danger
+            name: 3
+            label: Danger
+          - value: warning
+            name: 4
+            label: Warning
+          - value: info
+            name: 5
+            label: Info
+          - value: light
+            name: 6
+            label: Light
+          - value: dark
+            name: 7
+            label: Dark
+    - name: size
+      label: Size
+      defaultValue: none
+      $type: comboBoxField
+      datasource:
+        $type: optionListDatasource
+        options:
+          - value: none
+            name: -1
+            label: None
+            selected: true
+          - value: lg
+            name: 0
+            label: Large
+          - value: sm
+            name: 1
+            label: Small
+    - !include:/btk/includes/dialogs/text.yaml
+      required: true
+      defaultValue: Download
+    - !include:/btk/includes/dialogs/class.yaml
+    - !include:/btk/includes/dialogs/css.yaml
+
+  layout:
+    $type: tabbedLayout
+    tabs:
+      firstTab:
+        label: Main
+        fields:
+          - name: text
+          - name: damLink
+          - name: title
+          - name: caption
+      secondTab:
+        label: Style
+        fields:
+          - name: variant
+          - name: outline
+          - name: size
+          - name: class
+          - name: css
+----
+
+--
+Template FTL::
++
+--
+*Download*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#assign href = '#']
+[#-- PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPEG, PNG, webm, webp, mp4--]
+[#assign mimeTypeClassMapping =
+{"application/pdf": "bi-filetype-pdf",
+"application/doc": "bi-filetype-doc",
+"application/ms-doc": "bi-filetype-doc",
+"application/msword": "bi-filetype-doc",
+"application/vnd.openxmlformats-officedocument.wordprocessingml.document": "bi-filetype-docx",
+"application/excel": "bi-filetype-xls",
+"application/vnd.ms-excel": "bi-filetype-xls",
+"application/x-excel": "bi-filetype-xls",
+"application/x-msexcel": "bi-filetype-xls",
+"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "bi-filetype-xlsx",
+"application/mspowerpoint": "bi-filetype-ppt",
+"application/powerpoint": "bi-filetype-ppt",
+"application/vnd.ms-powerpoint": "bi-filetype-ppt",
+"application/x-mspowerpoint": "bi-filetype-ppt",
+"application/vnd.openxmlformats-officedocument.presentationml.presentation": "bi-filetype-pptx",
+"image/jpg": "bi-filetype-jpg",
+"image/jpeg": "bi-file-image",
+"image/pjpeg": "bi-file-image",
+"image/png": "bi-filetype-png",
+"video/mp4": "bi-filetype-mp4",
+"application/mp4": "bi-filetype-mp4"}]
+[#if content.damLink?has_content]
+  [#assign asset = damfn.getAsset(content.damLink)]
+  [#assign assetMap = damfn.getAssetMap(asset)]
+  [#assign assetLink = assetMap.link! /]
+  [#assign fileSize = "~${(assetMap.fileSize / 1000)?round}KB" /]
+  [#assign fileName = assetMap.fileName!"" /]
+  [#assign mimeType = assetMap.mimeType?split("/") /]
+  [#assign href = asset.getLink()!]
+
+  <div class="rounded border-2 border mt-2 ps-3">
+    <h3 class="mt-2 text-primary">${content.title!assetMap.title}</h3>
+    ${content.caption!assetMap.caption}
+    <div>
+      <span class="bg-secondary rounded p-1">${fileName}</span>
+      <span class="bg-secondary rounded p-1">${fileSize!''}</span>
+      [#if mimeTypeClassMapping[assetMap.mimeType]?has_content]
+        <i class="fs-4 bi ${mimeTypeClassMapping[assetMap.mimeType]}" title="${mimeType[0]!}"></i>
+      [/#if]
+    </div>
+    <a role="button"
+       class="mt-2 mb-2 ${utils.getClassName('btn btn-${content.variant!"none"} btn-outline-${content.outline!"none"} btn-${content.size!"none"}')} active"
+       style="${cmsfn.decode(content).css!""}"
+       aria-pressed="true"
+       href="${href}">${content.text!'Download'}</a>
+  </div>
+[/#if]
+----
+
+--
+Template YAML::
++
+--
+*Download*
+
+Template ID: `btk:components/download/download`
+[source,yaml]
+----
+title: Download
+renderType: freemarker
+templateScript: /btk/templates/components/download/download.ftl
+dialog: btk:components/download
+----
+--

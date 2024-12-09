@@ -1,0 +1,14 @@
+name: btk
+title: Magnolia Component Library
+version: master
+nav:
+  - modules/ROOT/nav.adoc
+
+asciidoc:
+  attributes:
+    artifact-id: magnolia-component-library
+    modules-version: '3.0.0'
+    version-compatible: '6.2'
+    jira-project: MCL
+    git: https://git.magnolia-cms.com/projects/LIGHT-MODULES/repos/btk/
+    page-layout: incubate

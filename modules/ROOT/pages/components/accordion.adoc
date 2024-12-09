@@ -1,0 +1,182 @@
+= Accordion
+:page-aliases: 3.0.0@btk:ROOT:{page-relative-src-path}
+
+Accordions allow you to create a vertically collapsing component to showcase content in an organised, collapsible format. You an use an Accordion to display FAQs or to organise the content on your page.
+
+Accordions can be useful especially for devices with minimum screen real estate, such as mobile devices.
+
+== Features
+. Supports a single Accordion item being expanded at once
+. Content inside the Accordion items can be shown and hidden by clicking or touching the header
+. A heading and body rich text for each Accordion item can be entered via the dialog
+. Accordion items can be configured to be open or closed by default
+
+== Usage
+This component can only be added to the Column area of a Row component. Up to 10 Accordion items can be added to an Accordion. This can be modified by changing the `maxComponents` property from the default value.
+
+=== Add Accordion container
+To add the Accordion container:
+
+. In a Column area click *Add component*. Select *Accordion* then *Next*.
+image:components/accordion/01_Add component.png[Add component dialog]
+
+. The Accordion properties form will be shown with the relevant configuration options.
+image:components/accordion/02_Configure accordion.png[Configure the settings of the Accordion]
+
+=== Add Accordion items
+. With the *Items* area selected on the Page, click *Add component*. In this dialog click *Next*.
+image:components/accordion/03_Add item.png[Add Accordion item]
+
+. In the Item edit dialog you can enter the content for this Accordion item, including the Heading and the Body content.
+image:components/accordion/04_Edit item.png[Edit Accordion item]
+
+. Continue adding more Accordion items until you have enough content.
+image:components/accordion/05_Accordions on page.png[Edit Accordion item]
+
+. In preview mode, you can see how the accordions are displayed on the page.
+image:components/accordion/06_Preview.png[Using WYSIWYG preview]
+
+== Configuration
+The following configuration parameters are supported with this component.
+
+[cols="3,2,5a"]
+|===
+|Parameter | Default value | Description
+
+| `maxComponents` | 10 | The maximum number of supported Accordion items in an Accordion container.
+
+.2+| Group Management .2+| False | Adds accordion-like group management to the collapsible area.
+|*False* means multiple accordion items can be expanded at once, whereas *True* means only one accordion item is expanded at once.
+
+| Display | False | By default, determine whether to show or hide the body of the accordion item.
+
+|===
+
+== Code
+[tabs]
+====
+Dialog::
++
+--
+*Accordion*
+[source,yaml]
+----
+label: Accordion
+width: medium
+form:
+  name: Accordion
+  properties:
+  - name: groupManagement
+    label: Group Management
+    type: java.lang.Boolean
+    $type: checkBoxField
+    buttonLabel: Add accordion-like group management to a collapsible area
+  - !include:/btk/includes/dialogs/class.yaml
+  - !include:/btk/includes/dialogs/css.yaml
+----
+*Item*
+[source,yaml]
+----
+label: Item
+width: medium
+form:
+  name: Item
+  properties:
+  - name: display
+    label: Display
+    type: java.lang.Boolean
+    $type: checkBoxField
+    buttonLabel: Show/Hide the Body by default.
+  - !include:/btk/includes/dialogs/heading.yaml
+    required: true
+  - !include:/btk/includes/dialogs/body.yaml
+    required: true
+----
+--
+Template FTL::
++
+--
+*Accordion*
+[source,ftl]
+----
+[@cms.area name="items" contextAttributes={"content": content!} /]
+----
+
+*Accordion Area*
+[source,ftl]
+----
+[#import "/btk/includes/templates/class.ftl" as utils]
+[#include "/btk/includes/templates/css.ftl"]
+
+[#if components?has_content]
+  [#assign parentId = 'accordion-${content.@id}']
+  <div class="accordion ${ctx.content.class!""}" id="${parentId}" style="${cmsfn.decode(ctx.content).css!""}">
+    [#list components as component]
+      [#assign total = components?size]
+
+      [@cms.component content=component contextAttributes={"groupManagement": ctx.content.groupManagement, "parentId": parentId} /]
+    [/#list]
+  </div>
+[#elseif cmsfn.isEditMode()]
+  This accordion is empty
+[/#if]
+----
+
+*Item*
+[source,ftl]
+----
+[#if content.heading?has_content && content.body?has_content]
+  [#assign class = 'accordion-collapse collapse']
+  [#assign aria_expanded = 'false']
+  [#if content.display?? && content.display]
+    [#assign class += ' show']
+    [#assign aria_expanded = 'true']
+  [/#if]
+  [#assign itemId = 'item-${ctx.parentId}-${content.@id}']
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#${itemId!''}" aria-expanded="${aria_expanded!'false'}" aria-controls="${itemId!''}">
+        ${content.heading!''}
+      </button>
+    </h2>
+    <div id="${itemId!''}" class="${class!''}" [#if ctx.groupManagement]data-bs-parent="#${ctx.parentId!''}"[/#if] bis_skin_checked="1">
+      <div class="accordion-body" bis_skin_checked="1">
+        ${cmsfn.decode(content).body!''}
+      </div>
+    </div>
+  </div>
+[/#if]
+----
+--
+Template YAML::
++
+--
+*Accordion*
+
+Template ID: `btk:components/accordion/accordion`
+[source,yaml]
+----
+title: Accordion
+renderType: freemarker
+templateScript: /btk/templates/components/accordion/accordion.ftl
+dialog: btk:components/accordion/accordion
+areas:
+  items:
+    templateScript: /btk/templates/areas/accordion-items.ftl
+    maxComponents: 10
+    availableComponents:
+      item:
+        id: btk:components/accordion/item
+----
+
+*Item*
+
+Template ID: `btk:components/accordion/item`
+[source,yaml]
+----
+title: Accordion Item
+renderType: freemarker
+templateScript: /btk/templates/components/accordion/item.ftl
+dialog: btk:components/accordion/item
+----
+--
